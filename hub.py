@@ -61,9 +61,51 @@ async def on_message(msg: discord.Message):
                                             description='Не ваша это команда.')
                         await msg.channel.send(embed=emb)
 
+@__Config__.event
+async def on_ready():
+    print('\n')
+    print("""
+[]=========================[]
+||.........................||
+||.........................||
+||.....:::::.....:::::.....||
+||....:~---^^...^^---~:....||
+||...:|▲#...|^.^|...#▲|:...||
+||....|▼#..:|:::|:..#▼|....||
+||$$^::^~/$$$$$$$$$\~^::^$$||
+||.:\$$$T/:.     .:\T$$$/:.||
+||                         ||
+||                         ||
+||                         ||
+||                         ||
+[]=========================[]
+"""
+        )
+    print('|\t Running under ', __Client__.user.name + ' ' + __Client__.user.discriminator)
+    print('\n')
+    #User(408980792165924884).make_mod()
+
 def command(keyword):
     def wrapper(func):
         __Commands__[keyword] = func
         return func
     return wrapper
         
+class DMSession:
+    async def __init__(self, msg: discord.Message):
+        self._next_step = self.first
+
+    async def feed(self, msg: discord.Message):
+        await self._next_step(self, msg)
+    
+    def stop(self, msg):
+        raise EndDMSession
+
+    def next(self, func):
+        self._next_step = func
+
+def dm_session(keyword):
+    def wrapper(cls):
+        __DMSessionOptions__[keyword] = cls
+        return cls
+    return wrapper

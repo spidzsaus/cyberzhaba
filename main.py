@@ -9,7 +9,7 @@ from PIL import Image
 import asyncio
 
 from hub import __Client__, __Config__, __Token__
-from hub import command, AccessDeniedError
+from hub import command, dm_session, DMSession, AccessDeniedError, EndDMSession
 from users import User
 
 ORGANS_AVAILABLE = False
@@ -146,15 +146,10 @@ async def blacklist(msg):
         embed.set_thumbnail(url=d.avatar_url)
         await msg.channel.send(embed=embed)
 
-
-@client.event
-async def on_message(msg: discord.Message):
-    if msg.author == __Client__.user:
-        return
-
-    if msg.channel.type is discord.ChannelType.private:
+@dm_session('похвали меня')
+class ComplimentOneliner(DMSession):
+    async def first(self, msg):
         if msg.author.id == 408980792165924884 or msg.author.id == 731763520416514060 or msg.author.id == 561522627118759956:
-            print(msg.content)
             import random
             prefix = ['воу,', 'блин,', 'ого', 'ну,', 'ладно,', 'йоу,', '', '', '', '', '']
             data = [(['звучит', 'вышло', 'вполне', 'а вот тут уже реально', 'вообще', 'объективно', 'достаточно', 'на самом деле'],
@@ -167,6 +162,7 @@ async def on_message(msg: discord.Message):
             random.shuffle(d)
             message = ' '.join([random.choice(prefix)] + d).strip()
             await msg.channel.send(message + '.')
+        raise EndDMSession
 
 
 async def reaction_event(payload, meaning=1):
@@ -194,11 +190,6 @@ async def on_raw_reaction_add(payload):
 @__Config__.event
 async def on_raw_reaction_remove(payload):
     await reaction_event(payload, -1)
-
-@__Config__.event
-async def on_ready():
-    print('Бот запущен как ', __Config__.user.name)
-    User(408980792165924884).make_mod()
 
 if __name__ == '__main__':
     db_session.global_init('botdata.db')
