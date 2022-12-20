@@ -1,5 +1,4 @@
 import discord
-import json
 from data import db_session
 from data.usermodel import SqlUser, SqlBarrellOrgan
 import datetime as dt
@@ -8,16 +7,13 @@ import requests
 from io import BytesIO
 from PIL import Image
 import asyncio
-from secret_data import PROD_TOKEN
+
+from hub import __Client__, __Config__, __Token__
+from users import User
 
 ORGANS_AVAILABLE = False
 
 frame = Image.open('frame.png')
-
-client = discord.Client(intents=discord.Intents.all())
-
-with open('config.json', encoding='utf-8') as file:
-    CONFIG = json.load(file)
 
 def days_delta(msg):
     now = dt.datetime.today()
@@ -32,122 +28,11 @@ def basic_embed(title, text, *fields):
         emb.add_field(name=name, value=value)
     return emb
 
-class BarellOrgan:
-    def __new__(cls, id):
-        owner_discord_id = id
-        db_sess = db_session.create_session()
-        owner = db_sess.query(SqlUser).filter(SqlUser.discord_id == owner_discord_id
-                                              ).first()
-        if not owner:
-            return None
-
-        organ = db_sess.query(SqlBarrellOrgan).filter(SqlBarrellOrgan.owner == owner.id
-                                                      ).first()
-        
-        if not organ:
-            return None
-        
-        instance = cls(organ)
-        return instance
-
-    def __init__(self, organ):
-        self.name = organ.name
-        self.description = organ.label
-        self.path = '/barrell-organs/' + self.name + '/'
-
-    def __bool__(self):
-        return True
-    
-    def SQL(self):
-        return db_session.create_session().query(SqlUser).filter(
-            SqlUser.discord_id == self.discord_id).first()
-    
-
-class User:
-    def __init__(self, id):
-        self.discord_id = id
-        
-        db_sess = db_session.create_session()
-        if not db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
-                                             ).first():
-            new = SqlUser(discord_id=id)
-            db_sess.add(new)
-            db_sess.commit()
-        return None
-
-    def __bool__(self):
-        return True
-
-    async def DISCORD(self):
-        return await client.fetch_user(self.discord_id)
-    
-    def SQL(self):
-        return db_session.create_session().query(SqlUser).filter(
-            SqlUser.discord_id == self.discord_id).first()
-    
-    def organ(self):
-        return db_session.create_session().query(SqlBarrellOrgan).filter(
-            SqlBarrellOrgan.owner == self.SQL().id).first()
-
-    @property
-    def karma(self):
-        db_sess = db_session.create_session()
-        return db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
-                                             ).first().karma
-
-    def is_blacklisted(self):
-        db_sess = db_session.create_session()
-        return db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
-                                             ).first().blacklist
-
-    def add_to_blacklist(self):
-        db_sess = db_session.create_session()
-        user = db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
-                                             ).first()
-        user.blacklist = True
-        db_sess.commit()
-
-    def make_mod(self):
-        db_sess = db_session.create_session()
-        user = db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
-                                             ).first()
-        user.mod = True
-        db_sess.commit()
-
-    def unmod(self):
-        db_sess = db_session.create_session()
-        user = db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
-                                             ).first()
-        user.mod = False
-        db_sess.commit()      
-
-    def remove_from_blacklist(self):
-        db_sess = db_session.create_session()
-        user = db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
-                                             ).first()
-        user.blacklist = False
-        db_sess.commit()
-
-    def add_karma(self, add):
-        db_sess = db_session.create_session()
-        user = db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
-                                             ).first()
-        user.karma = user.karma + add
-        db_sess.commit()
-
-
-def user_from_string(string):
-    try:
-        return User(int(string))
-    except ValueError:
-        if string.startswith('<@!') and string[-1] == '>':
-            return User(int(string[3:-1]))
-    return False
 
 
 @client.event
 async def on_message(msg: discord.Message):
-    if msg.author == client.user:
+    if msg.author == __Client__.user:
         return
 
     if msg.channel.type is discord.ChannelType.private:
@@ -165,12 +50,13 @@ async def on_message(msg: discord.Message):
             random.shuffle(d)
             message = ' '.join([random.choice(prefix)] + d).strip()
             await msg.channel.send(message + '.')
+        
     if msg.content.startswith('кж!карма'):
         args = msg.content.split()
         if len(args) == 1:
             user = User(msg.author.id)
         else:
-            user = user_from_string(args[1])
+            user = User.from_string(args[1])
             if not user:
                 embed = basic_embed(':x: Ээээ....',
                                     'кто?')
@@ -307,5 +193,5 @@ async def on_ready():
 if __name__ == '__main__':
     db_session.global_init('botdata.db')
     print('Запуск бота')
-    client.run(PROD_TOKEN)
+    __Client__.run(__Token__)
     
