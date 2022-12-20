@@ -1,0 +1,4 @@
+secret_data.py
+botdata.db
+**/__pycache__/*
+**/venv/*
