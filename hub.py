@@ -4,6 +4,9 @@ import json
 class EndDMSession(Exception):
     pass
 
+class AccessDeniedError(Exception):
+    pass
+
 __Client__ = discord.Client(intents=discord.Intents.all())
 
 class Config:
@@ -50,4 +53,17 @@ async def on_message(msg: discord.Message):
             if not body: return
             for keyword, command in __Commands__.items():
                 if body[0].lower() == keyword:
-                    await command(msg)
+                    try:
+                        await command(msg)
+                    except AccessDeniedError:
+                        emb = discord.Embed(color=discord.Color.red(),
+                                            title='Не-а!',
+                                            description='Не ваша это команда.')
+                        await msg.channel.send(embed=emb)
+
+def command(keyword):
+    def wrapper(func):
+        __Commands__[keyword] = func
+        return func
+    return wrapper
+        
