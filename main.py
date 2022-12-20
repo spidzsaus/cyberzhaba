@@ -31,7 +31,7 @@ def basic_embed(title, text, *fields):
 
 
 @command('карма')
-async def karma(msg):
+async def view_karma(msg):
     args = msg.content.split()
     if len(args) == 1:
         user = User(msg.author.id)
@@ -117,7 +117,7 @@ async def leaderboard(msg):
 
 @command('блеклист')
 async def blacklist(msg):
-    if User(msg.author.id).SQL().mod:
+    if not User(msg.author.id).SQL().mod:
         raise AccessDeniedError
     args = msg.content.split()
     if len(args) == 1:
@@ -187,12 +187,12 @@ async def reaction_event(payload, meaning=1):
 async def on_raw_reaction_add(payload):
     await reaction_event(payload, 1)
 
-@__Config__.event
+@__Client__.event
 async def on_raw_reaction_remove(payload):
     await reaction_event(payload, -1)
 
 if __name__ == '__main__':
     db_session.global_init('botdata.db')
-    print('Запуск бота')
+    print('|\tBooting up the discord client')
     __Client__.run(__Token__)
     

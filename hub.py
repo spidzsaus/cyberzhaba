@@ -11,7 +11,7 @@ __Client__ = discord.Client(intents=discord.Intents.all())
 
 class Config:
     def __init__(self, __config):
-        for key, value in __config:
+        for key, value in __config.items():
             self.__setattr__(key, value)
     
 
@@ -37,22 +37,26 @@ async def on_message(msg: discord.Message):
         return
     
     if msg.channel.type is discord.ChannelType.private:
-        if msg.author.id in __ActiveDMSessions__:
-            try:
-                await __ActiveDMSessions__[msg.author.id].feed(msg)
-            except EndDMSession:
-                del __ActiveDMSessions__[msg.author.id]
+        if msg.author.id not in __ActiveDMSessions__:
+            _session_started = False
+            for keyword, sessiontype in __DMSessionOptions__.items():
+                if msg.content.startswith(keyword):
+                    __ActiveDMSessions__[msg.author.id] = sessiontype(msg)
+                    _session_started = True
+            if not _session_started:
+                return
+        try:
+            await __ActiveDMSessions__[msg.author.id].feed(msg)
+        except EndDMSession:
+            del __ActiveDMSessions__[msg.author.id]
 
-        for keyword, sessiontype in __DMSessionOptions__.items():
-            if msg.startswith(keyword):
-                __ActiveDMSessions__[msg.author.id] = await sessiontype(msg)
     
     else:
         if msg.content.startswith(__Config__.prefix):
-            body = msg.content.lstrip(__Config__.prefix).strip().split()
+            body = msg.content[len(__Config__.prefix):].strip().split()
             if not body: return
             for keyword, command in __Commands__.items():
-                if body[0].lower() == keyword:
+                if body[0].lower() == keyword.lower():
                     try:
                         await command(msg)
                     except AccessDeniedError:
@@ -61,27 +65,28 @@ async def on_message(msg: discord.Message):
                                             description='Не ваша это команда.')
                         await msg.channel.send(embed=emb)
 
-@__Config__.event
+@__Client__.event
 async def on_ready():
-    print('\n')
-    print("""
-[]=========================[]
-||.........................||
-||.........................||
-||.....:::::.....:::::.....||
-||....:~---^^...^^---~:....||
-||...:|▲#...|^.^|...#▲|:...||
-||....|▼#..:|:::|:..#▼|....||
-||$$^::^~/$$$$$$$$$\~^::^$$||
-||.:\$$$T/:.     .:\T$$$/:.||
-||                         ||
-||                         ||
-||                         ||
-||                         ||
-[]=========================[]
-"""
+    print("""|\t
+|\t[]=========================[]
+|\t||.........................||
+|\t||.........................||
+|\t||.....:::::.....:::::.....||
+|\t||....:~---^^...^^---~:....||
+|\t||...:|▲#...|^.^|...#▲|:...||
+|\t||....|▼#..:|:::|:..#▼|....||
+|\t||$$^::^~/$$$$$$$$$\~^::^$$||
+|\t||.:\$$$T/:.     .:\T$$$/:.||
+|\t||                         ||
+|\t||                         ||
+|\t||                         ||
+|\t||                         ||
+|\t[]=========================[]
+|\t"""
         )
-    print('|\t Running under ', __Client__.user.name + ' ' + __Client__.user.discriminator)
+    print('|\tSETUP FINISHED')
+    print('|\tThe bot is running under @' + __Client__.user.name + '#' + __Client__.user.discriminator)
+    print('|\t' + ('[!] ' if __Config__.debug_mode else '') + 'Debug mode is turned ' + ('ON' if __Config__.debug_mode else 'OFF'))
     print('\n')
     #User(408980792165924884).make_mod()
 
@@ -92,11 +97,11 @@ def command(keyword):
     return wrapper
         
 class DMSession:
-    async def __init__(self, msg: discord.Message):
+    def __init__(self, msg: discord.Message):
         self._next_step = self.first
 
     async def feed(self, msg: discord.Message):
-        await self._next_step(self, msg)
+        await self._next_step(msg)
     
     def stop(self, msg):
         raise EndDMSession
