@@ -1,3 +1,3 @@
 - [ ] Add category whitelist support
 - [ ] Implement Barrell Organs Event
-- [ ] Refactor the code into seperate modules
+- [x] Refactor the code into seperate modules

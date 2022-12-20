@@ -1,5 +1,5 @@
-from data.usermodel import SqlUser, SqlBarrellOrgan
-from data import db_session
+from db.usermodel import SqlUser, SqlBarrellOrgan
+from db import db_session
 
 from hub import __Client__
 
