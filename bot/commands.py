@@ -69,7 +69,9 @@ async def barrel_organ(msg):
     embed.set_thumbnail(url=user.avatar.url)
     await msg.channel.send(embed=embed, file=image)
     
-    voice_channel=user.voice.channel
+    voice_channel=user.voice
+    if voice_channel:
+        voice_channel = voice_channel.channel
     if voice_channel != None:
         embed = basic_embed(user.name + ' запустил свою шарманку',
                             'Все присутствующие в ' + voice_channel.name + ' ошеломлены..')

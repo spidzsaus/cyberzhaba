@@ -269,7 +269,7 @@ class BarrellOrganCrafting(DMSession):
         sess.commit()
 
         await msg.channel.send('Благодарю за участие <3! Если передумаешь, ты всегда можешь изменить шарманку, повторно вызвав команду "создать шарманку!", новая шарманка просто встанет на место старой.')
-
+        raise EndDMSession
          
 
 
