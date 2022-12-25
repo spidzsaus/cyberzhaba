@@ -101,7 +101,8 @@ class BarrellOrganCrafting(DMSession):
 
         self.user = User(msg.author.id)
 
-        self.model = BarellOrgan.__new__(id=self.recipient_id,
+        self.model = BarellOrgan.__new__(BarellOrgan,
+                                         id=self.recipient_id,
                                          init=True,
                                          author=self.user.SQL().id)
 
@@ -261,11 +262,11 @@ class BarrellOrganCrafting(DMSession):
 
         await msg.channel.send(embed=embed, file=image,)
 
-        db_sess = db_session.create_session()
-        self.model.name = self.bb_name
-        self.model.label = self.bb_lore
-        db_sess.add(self.model)
-        db_sess.commit()
+        sqlmodel, sess = self.model.SQL(return_sess=True)
+        sqlmodel.name = self.bb_name
+        sqlmodel.label = self.bb_lore
+        sess.add(sqlmodel)
+        sess.commit()
 
         await msg.channel.send('Благодарю за участие <3! Если передумаешь, ты всегда можешь изменить шарманку, повторно вызвав команду "создать шарманку!", новая шарманка просто встанет на место старой.')
 

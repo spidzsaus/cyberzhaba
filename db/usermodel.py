@@ -12,10 +12,10 @@ class SqlUser(SqlAlchemyBase):
     mod = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
 
 class SqlBarrellOrgan(SqlAlchemyBase):
-    __tablename__ = 'organs'
+    __tablename__ = 'barrellorgans'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
-    author = sqlalchemy.ForeignKey(SqlUser.id)
-    owner = sqlalchemy.ForeignKey(SqlUser.id)
+    author = sqlalchemy.Column(sqlalchemy.Integer)
+    owner = sqlalchemy.Column(sqlalchemy.Integer)
     name = sqlalchemy.Column(sqlalchemy.String)
     label = sqlalchemy.Column(sqlalchemy.Text)
