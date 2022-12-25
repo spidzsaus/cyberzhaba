@@ -8,6 +8,7 @@ from PIL import Image
 import asyncio
 import discord
 from helper_tools import basic_embed
+import os
 
 from users import User
 from barrellorgans import BarellOrgan
@@ -45,7 +46,7 @@ async def view_karma(msg):
 async def barrel_organ(msg):
     user=msg.author
 
-    barrellorgan = BarellOrgan(user.id)
+    barrellorgan = BarellOrgan.__new__(user.id)
 
     voice_channel=user.voice.voice_channel
     if voice_channel != None:
@@ -55,7 +56,7 @@ async def barrel_organ(msg):
         await msg.channel.send(embed=embed)
 
         vc = await __Client__.join_voice_channel(voice_channel)
-        player = vc.create_ffmpeg_player('vuvuzela.mp3')
+        player = vc.create_ffmpeg_player(os.path.join(barrellorgan.path, 'melody.mp3'))
         player.start()
         while not player.is_done():
             await asyncio.sleep(1)
