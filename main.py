@@ -16,7 +16,12 @@ async def reaction_event(payload, meaning=1):
     user = await __Client__.fetch_user(payload.user_id)
     if user.id == msg.author.id or user.bot or msg.author.bot:
         return
-    if payload.channel_id not in __Config__.channel_whitelist and True not in [word in channel.name for word in __Config__.channel_whitelist_keywords]:
+    
+    category_whitelisted = channel.category and (channel.category_id in __Config__.category_whitelist)
+    channel_whitelisted = payload.channel_id in __Config__.channel_whitelist
+    keyword_whitelisted = True in [word in channel.name for word in __Config__.channel_whitelist_keywords]
+
+    if not (category_whitelisted or channel_whitelisted or keyword_whitelisted):
         return
     if User(payload.user_id).is_blacklisted() or User(msg.author.id).is_blacklisted():
         return
