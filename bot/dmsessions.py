@@ -40,6 +40,22 @@ class BarrellOrganCrafting(DMSession):
     PAD_H_U = IMG_OFFSET[1]
     PAD_H_B = 1164 - IMG_H - PAD_H_U
 
+    def pickup(self, msg):
+        user = User(msg.author.id)
+
+        model = BarellOrgan.__new__(BarellOrgan,
+                                    id=self.recipient_id)
+
+        if model is None:
+            return self.first
+        
+        path = os.path.join('data', 'barrellorgans', str(model.SQL().id))
+        if not os.path.isfile(os.path.join(path, 'melody.mp3')):
+            return self.first
+        
+        if not os.path.isfile(os.path.join(path, 'image.png')):
+            return self.image_preview
+
     async def first(self, msg):
         if msg.author.id not in SECRETSANTA_PARTICIPANTS:
             await msg.channel.send(embed=basic_embed(title=':x: Эх.',
@@ -48,6 +64,34 @@ class BarrellOrganCrafting(DMSession):
             raise EndDMSession
         self.recipient_id = SECRETSANTA_RECIPIENTS[SECRETSANTA_PARTICIPANTS.index(msg.author.id)]
         self.author_id = msg.author.id
+        if self.pickup(msg) == self.image_preview:
+            text = f'Тааак, такое дело.'
+            text += '\n\n'
+            text += f'Пока тебя не было, бот успел перезапуститься.'
+            text += '\n'
+            text += f'В обычной ситуации это значило бы, что крафт шарманки обнулился бы, нооо я вижу что у тебя уже готова мелодия шарманки, поэтому вернёмся к этому моменту.'
+            text += '\n'
+            text += f'Сорян если что-то потерял.'
+            text += '\n'
+            text += 'Продолжай приикреплять картинку к шарманке.'
+            await msg.channel.send(embed=basic_embed(title='[?/5] :warning: ',
+                                                    text=text,
+                                                    color=discord.Color.og_blurple()))
+
+            path = os.path.join('data', 'barrellorgans')
+
+            self.user = User(msg.author.id)
+
+            self.model = BarellOrgan.__new__(BarellOrgan,
+                                            id=self.recipient_id,
+                                            init=True,
+                                            author=self.user.SQL().id)
+
+            self.path = os.path.join(path, str(self.model.SQL().id))
+            self.next(self.image_preview)
+            return
+            
+
         text = f'Привет, {msg.author.name}.'
         text += '\n\n'
         text += f'Итак, сейчас мы будем вместе делать шарманку.'

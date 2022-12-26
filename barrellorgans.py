@@ -9,6 +9,7 @@ class BarellOrgan:
         db_sess = db_session.create_session()
         owner = db_sess.query(SqlUser).filter(SqlUser.discord_id == owner_discord_id
                                               ).first()
+        print(owner, owner_discord_id)
         if not owner:
             return None
 
