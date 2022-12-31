@@ -1,7 +1,7 @@
 from hub import dm_session, DMSession, EndDMSession
 from helper_tools import basic_embed
 import discord
-from secret_data import SECRETSANTA_PARTICIPANTS, SECRETSANTA_RECIPIENTS, FEMALE_PRONOUNS
+from secret_data import FEMALE_PRONOUNS
 import os
 import eyed3
 from PIL import Image
@@ -12,6 +12,7 @@ from db import db_session
 from db.usermodel import SqlBarrellOrgan
 from users import User
 from barrellorgans import BarellOrgan
+from secret_santa import *
 
 @dm_session('похвали меня')
 class ComplimentOneliner(DMSession):
@@ -55,14 +56,22 @@ class BarrellOrganCrafting(DMSession):
         
         if not os.path.isfile(os.path.join(path, 'image.png')):
             return self.image_preview
+        
+        if not model.description:
+            return self.lore
+        
+        if not model.name:
+            return self.name
 
     async def first(self, msg):
-        if msg.author.id not in SECRETSANTA_PARTICIPANTS:
+        self.secret_santa_player = SecretSantaPlayer(msg.author.id)
+
+        if not (self.secret_santa_player):
             await msg.channel.send(embed=basic_embed(title=':x: Эх.',
                                                      text="Извини, но ты не участвуешь в ивенте.",
                                                      color=discord.Color.og_blurple()))
             raise EndDMSession
-        self.recipient_id = SECRETSANTA_RECIPIENTS[SECRETSANTA_PARTICIPANTS.index(msg.author.id)]
+        self.recipient_id = self.secret_santa_player.get_match().discord_id
         self.author_id = msg.author.id
         if self.pickup(msg) == self.image_preview:
             text = f'Тааак, такое дело.'
@@ -89,6 +98,60 @@ class BarrellOrganCrafting(DMSession):
 
             self.path = os.path.join(path, str(self.model.SQL().id))
             self.next(self.image_preview)
+            return
+        
+        if self.pickup(msg) == self.lore:
+            text = f'Тааак, такое дело.'
+            text += '\n\n'
+            text += f'Пока тебя не было, бот успел перезапуститься.'
+            text += '\n'
+            text += f'В обычной ситуации это значило бы, что крафт шарманки обнулился бы, нооо я вижу что у тебя уже готовы мелодия шарманки с картинкой, поэтому вернёмся к этому моменту.'
+            text += '\n'
+            text += f'Сорян если что-то потерял.'
+            text += '\n'
+            text += 'Продолжай писать подпись к шарманке.'
+            await msg.channel.send(embed=basic_embed(title='[?/5] :warning: ',
+                                                    text=text,
+                                                    color=discord.Color.og_blurple()))
+
+            path = os.path.join('data', 'barrellorgans')
+
+            self.user = User(msg.author.id)
+
+            self.model = BarellOrgan.__new__(BarellOrgan,
+                                            id=self.recipient_id,
+                                            init=True,
+                                            author=self.user.SQL().id)
+
+            self.path = os.path.join(path, str(self.model.SQL().id))
+            self.next(self.lore)
+            return
+        
+        if self.pickup(msg) == self.name:
+            text = f'Тааак, такое дело.'
+            text += '\n\n'
+            text += f'Пока тебя не было, бот успел перезапуститься.'
+            text += '\n'
+            text += f'В обычной ситуации это значило бы, что крафт шарманки обнулился бы, нооо я вижу что у тебя уже готовы мелодия шарманки с картинкой и подписью, поэтому вернёмся к этому моменту.'
+            text += '\n'
+            text += f'Сорян если что-то потерял.'
+            text += '\n'
+            text += 'Продолжай писать название к шарманке.'
+            await msg.channel.send(embed=basic_embed(title='[?/5] :warning: ',
+                                                    text=text,
+                                                    color=discord.Color.og_blurple()))
+
+            path = os.path.join('data', 'barrellorgans')
+
+            self.user = User(msg.author.id)
+
+            self.model = BarellOrgan.__new__(BarellOrgan,
+                                            id=self.recipient_id,
+                                            init=True,
+                                            author=self.user.SQL().id)
+
+            self.path = os.path.join(path, str(self.model.SQL().id))
+            self.next(self.lore)
             return
             
 
