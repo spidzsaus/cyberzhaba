@@ -6,4 +6,4 @@
 - [ ] Fix user mentioning
 - [x] Swap Ando and Floppa
 - [x] Add craft session resuming
-- [ ] Add replacement tables
+- [x] Add replacement tables
