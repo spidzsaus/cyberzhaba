@@ -23,7 +23,7 @@ def days_delta(msg):
 
 
 frame = Image.open("frame.png")
-
+frame2 = Image.open("frame2.png")
 
 @command("карма")
 async def view_karma(msg):
@@ -122,6 +122,21 @@ async def logowo_day(msg):
             file=discord.File(fp=image_binary, filename="result.png")
         )
 
+@command("деньлогова2023")
+async def logovo_day(msg):
+    await msg.channel.send("ща будет жди")
+    with requests.get(msg.author.avatar.url) as r:
+        img_data = r.content
+        ava = Image.open(BytesIO(img_data))
+    ava = ava.resize((2000, 2000))
+    ava.paste(frame2, (0, 0), frame2)
+    with BytesIO() as image_binary:
+        ava.save(image_binary, "PNG")
+        image_binary.seek(0)
+        await msg.channel.send(
+            file=discord.File(fp=image_binary, filename="result.png")
+        )
+
 
 @command("хелп")
 async def help(msg):
@@ -195,7 +210,8 @@ async def blacklist(msg):
             title=d.name + " добавлен в чёрный список.",
             text="Смейтесь его! Гоняйте над ним!",
         )
-        embed.set_thumbnail(url=d.avatar_url)
+        if d.avatar:
+            embed.set_thumbnail(url=d.avatar_url)
         await msg.channel.send(embed=embed)
     elif args[1] == "убрать":
         user = User(int(msg.content.split()[2]))
@@ -205,5 +221,6 @@ async def blacklist(msg):
             title=d.name + " вычтен из чёрного списка.",
             text="на этот раз прощаем.",
         )
-        embed.set_thumbnail(url=d.avatar_url)
+        if d.avatar:
+            embed.set_thumbnail(url=d.avatar_url)
         await msg.channel.send(embed=embed)
