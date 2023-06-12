@@ -128,7 +128,7 @@ async def logovo_day(msg):
     with requests.get(msg.author.avatar.url) as r:
         img_data = r.content
         ava = Image.open(BytesIO(img_data))
-    ava = ava.resize((2000, 2000))
+    ava = ava.resize((1024, 1024))
     ava.paste(frame2, (0, 0), frame2)
     with BytesIO() as image_binary:
         ava.save(image_binary, "PNG")
