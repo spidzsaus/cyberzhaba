@@ -5,6 +5,7 @@ import all_modules
 from bot.commands_exceptions import AccessDeniedError
 from bot.commands_manager import EndDMSession
 from users import User
+from bot_logging import bot_logger
 
 
 @client.event
@@ -46,12 +47,11 @@ async def on_ready():
 |\t||                         ||
 |\t||                         ||
 |\t[]=========================[]
-|\t"""
+|\t     The bot is running!"""
         )
-    print('|\tSETUP FINISHED')
-    print('|\tThe bot is running under @' + client.user.name + '#' + client.user.discriminator)
-    print('|\t' + ('[!] ' if DEBUG else '') + 'Debug mode is turned ' + ('ON' if DEBUG else 'OFF'))
-    print('\n')
+    bot_logger.info('SETUP FINISHED')
+    bot_logger.info('The bot is running under @' + client.user.name + '#' + client.user.discriminator)
+    bot_logger.info(('[!] ' if DEBUG else '') + 'Debug mode is turned ' + ('ON' if DEBUG else 'OFF'))
     #User(408980792165924884).make_mod()
 
 async def reaction_event(payload, meaning=1):

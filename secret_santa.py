@@ -1,6 +1,6 @@
 from secret_santa_data import SECRETSANTA_PARTICIPANTS, EXES, SECRETSANTA_QUITTED
 
-import logging
+from bot_logging import bot_logger
 
 import random
 SECRETSANTA_RECIPIENTS = SECRETSANTA_PARTICIPANTS[:]
@@ -17,7 +17,7 @@ for seed in range(4948395347374, 23894728374283429):
     except AssertionError:
         continue
 
-logging.info('Generated Secret Santa player match table with a seed ' + str(seed))
+bot_logger.info('Generated Secret Santa player match table with a seed ' + str(seed))
 
 
 

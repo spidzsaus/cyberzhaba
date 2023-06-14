@@ -1,5 +1,6 @@
 import logging
 import sys
+from config import DEBUG
 
 discord_logger = logging.getLogger('discord')
 discord_http_logger = logging.getLogger('discord.http')
@@ -28,3 +29,22 @@ production_file_handler = logging.handlers.RotatingFileHandler(
         maxBytes=32 * 1024 * 1024,  # 32 MiB
     )
 production_file_handler.setFormatter(formatter)
+
+
+if DEBUG:
+    discord_http_logger.setLevel(logging.DEBUG)
+    discord_logger.setLevel(logging.DEBUG)
+    bot_logger.setLevel(logging.DEBUG)
+    discord_http_logger.addHandler(stdout_handler)
+    discord_http_logger.addHandler(debug_file_handler)
+    discord_logger.addHandler(stdout_handler)
+    discord_logger.addHandler(debug_file_handler)
+    bot_logger.addHandler(stdout_handler)
+    bot_logger.addHandler(debug_file_handler)
+else:
+    discord_http_logger.setLevel(logging.INFO)
+    discord_logger.setLevel(logging.INFO)
+    bot_logger.setLevel(logging.INFO)
+    discord_http_logger.addHandler(production_file_handler)
+    discord_logger.addHandler(production_file_handler)
+    bot_logger.addHandler(production_file_handler)
