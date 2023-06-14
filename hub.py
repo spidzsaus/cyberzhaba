@@ -4,7 +4,7 @@ import logging
 import logging.handlers
 import sys
 
-logger = logging.getLogger('discord')
+discord_logger = logging.getLogger('discord')
 logging.getLogger('discord.http').setLevel(logging.INFO)
 dt_fmt = '%Y-%m-%d %H:%M:%S'
 formatter = logging.Formatter('[{asctime}] [{levelname:<8}] {name}: {message}', dt_fmt, style='{')
@@ -31,7 +31,6 @@ with open('config.json', encoding='utf-8') as file:
 if __Config__.debug_mode:
     from secret_data import DEBUG_TOKEN
     __Token__ = DEBUG_TOKEN
-    logger.setLevel(logging.DEBUG)
     stdout_handler = logging.StreamHandler(sys.stdout)
     stdout_handler.setFormatter(formatter)
     logger.addHandler(stdout_handler)
@@ -41,19 +40,22 @@ if __Config__.debug_mode:
         maxBytes=32 * 1024 * 1024,  # 32 MiB
     )
     file_handler.setFormatter(formatter)
+    file_handler.setLevel(logging.DEBUG)
     logger.addHandler(file_handler)
+    logger.setLevel(logging.DEBUG)
 
 else:
     from secret_data import PROD_TOKEN
     __Token__ = PROD_TOKEN
-    logger.setLevel(logging.INFO)
     file_handler = logging.handlers.RotatingFileHandler(
         filename='production.log',
         encoding='utf-8',
         maxBytes=32 * 1024 * 1024,  # 32 MiB
     )
     file_handler.setFormatter(formatter)
+    file_handler.setLevel(logging.INFO)
     logger.addHandler(file_handler)
+    logger.setLevel(logging.INFO)
     
 
 
@@ -115,10 +117,10 @@ async def on_ready():
 |\t[]=========================[]
 |\t"""
         )
-    print('|\tSETUP FINISHED')
-    print('|\tThe bot is running under @' + __Client__.user.name + '#' + __Client__.user.discriminator)
-    print('|\t' + ('[!] ' if __Config__.debug_mode else '') + 'Debug mode is turned ' + ('ON' if __Config__.debug_mode else 'OFF'))
-    print('\n')
+    print('|\t The bot is running!')
+    logging.info('SETUP FINISHED')
+    logging.info('The bot is running under @' + __Client__.user.name + '#' + __Client__.user.discriminator)
+    logging.info('|\t' + ('[!] ' if __Config__.debug_mode else '') + 'Debug mode is turned ' + ('ON' if __Config__.debug_mode else 'OFF'))
     #User(408980792165924884).make_mod()
 
 def command(keyword):

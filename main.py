@@ -10,6 +10,8 @@ from db import db_session
 import bot.commands
 import bot.dmsessions
 
+import logging
+
 async def reaction_event(payload, meaning=1):
     channel = await __Client__.fetch_channel(payload.channel_id)
     msg = await channel.fetch_message(payload.message_id)
@@ -43,6 +45,6 @@ async def on_raw_reaction_remove(payload):
 
 if __name__ == '__main__':
     db_session.global_init(os.path.join('data', 'botdata.db'))
-    print('|\tBooting up the discord client')
+    logging.info('Booting up the discord client')
     __Client__.run(__Token__, log_handler=None)
     

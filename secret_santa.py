@@ -1,5 +1,7 @@
 from secret_data import SECRETSANTA_PARTICIPANTS, EXES, SECRETSANTA_QUITTED
 
+import logging
+
 import random
 SECRETSANTA_RECIPIENTS = SECRETSANTA_PARTICIPANTS[:]
 for seed in range(4948395347374, 23894728374283429):
@@ -15,7 +17,7 @@ for seed in range(4948395347374, 23894728374283429):
     except AssertionError:
         continue
 
-print('|\tGenerated Secret Santa player match table with a seed ' + str(seed))
+logging.info('Generated Secret Santa player match table with a seed ' + str(seed))
 
 
 
