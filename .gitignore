@@ -4,3 +4,4 @@ botdata.db
 **/venv/*
 FFMPEG/*
 data/*
+**/*.log
