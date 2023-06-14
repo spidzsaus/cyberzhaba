@@ -1,9 +1,8 @@
-FROM python:3.10
+FROM python:latest
 
-WORKDIR /app
+WORKDIR /bot_dir
 
-COPY . .
+COPY . /bot_dir
 
-RUN py -m pip install -r requirements.txt
-
-RUN py main.py
+RUN pip install --no-cache-dir --upgrade -r /bot_dir/requirements.txt
+CMD ["python3", "main.py"]
