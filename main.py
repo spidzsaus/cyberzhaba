@@ -44,5 +44,5 @@ async def on_raw_reaction_remove(payload):
 if __name__ == '__main__':
     db_session.global_init(os.path.join('data', 'botdata.db'))
     print('|\tBooting up the discord client')
-    __Client__.run(__Token__)
+    __Client__.run(__Token__, log_handler=None)
     

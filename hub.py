@@ -1,5 +1,20 @@
 import discord
 import json
+import logging
+import logging.handlers
+
+logger = logging.getLogger('discord')
+logging.getLogger('discord.http').setLevel(logging.INFO)
+
+handler = logging.handlers.RotatingFileHandler(
+    filename='bot.log',
+    encoding='utf-8',
+    maxBytes=32 * 1024 * 1024,  # 32 MiB
+)
+dt_fmt = '%Y-%m-%d %H:%M:%S'
+formatter = logging.Formatter('[{asctime}] [{levelname:<8}] {name}: {message}', dt_fmt, style='{')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 class EndDMSession(Exception):
     pass
@@ -21,9 +36,11 @@ with open('config.json', encoding='utf-8') as file:
 if __Config__.debug_mode:
     from secret_data import DEBUG_TOKEN
     __Token__ = DEBUG_TOKEN
+    logger.setLevel(logging.DEBUG)
 else:
     from secret_data import PROD_TOKEN
     __Token__ = PROD_TOKEN
+    logger.setLevel(logging.INFO)
 
 
 __Commands__ = {}
