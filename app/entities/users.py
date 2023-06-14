@@ -1,7 +1,7 @@
-from db.usermodel import SqlUser, SqlBarrellOrgan
-from db import db_session
+from app.db.usermodel import SqlUser, SqlBarrellOrgan
+from app.db import db_session
 
-from setup import client
+from app.config import client
 
 
 class User:

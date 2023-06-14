@@ -1,5 +1,5 @@
-from config import cmd_manager
-from helper_tools import basic_embed
+from app.config import cmd_manager
+from app.helper_tools import basic_embed
 
 @cmd_manager.command("хелп")
 async def help(msg):

@@ -3,7 +3,7 @@ import sqlalchemy.orm as orm
 from sqlalchemy.orm import Session
 import sqlalchemy.ext.declarative as dec
 
-from bot_logging import bot_logger
+from app.bot_logging import bot_logger
 
 SqlAlchemyBase = dec.declarative_base()
 

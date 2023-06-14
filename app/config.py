@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-from bot.commands_manager import CommandsManager
+from app.bot.commands_manager import CommandsManager
 
 TOKEN = os.getenv("TOKEN")
 DEBUG = os.getenv("DEBUG", 'true') == 'true'

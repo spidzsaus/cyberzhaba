@@ -1,18 +1,18 @@
-from helper_tools import basic_embed
+from app.helper_tools import basic_embed
 import discord
-from secret_santa_data import FEMALE_PRONOUNS
+from app.secret_santa_data import FEMALE_PRONOUNS
 import os
 import eyed3
 from PIL import Image
 from io import BytesIO
 import requests
 import numpy
-from users import User
-from barrellorgans import BarellOrgan
-from secret_santa import *
+from app.entities.users import User
+from app.entities.barrellorgans import BarellOrgan
+from app.entities.secret_santa import *
 
-from bot.commands_manager import DMSession, EndDMSession
-from config import cmd_manager
+from app.bot.commands_manager import DMSession, EndDMSession
+from app.config import cmd_manager
 
 @cmd_manager.dm_session('создать шарманку!')
 class BarrellOrganCrafting(DMSession):

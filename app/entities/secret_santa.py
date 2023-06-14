@@ -1,6 +1,6 @@
-from secret_santa_data import SECRETSANTA_PARTICIPANTS, EXES, SECRETSANTA_QUITTED
+from app.secret_santa_data import SECRETSANTA_PARTICIPANTS, EXES, SECRETSANTA_QUITTED
 
-from bot_logging import bot_logger
+from app.bot_logging import bot_logger
 
 import random
 SECRETSANTA_RECIPIENTS = SECRETSANTA_PARTICIPANTS[:]

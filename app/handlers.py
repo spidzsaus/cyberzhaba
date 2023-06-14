@@ -2,10 +2,10 @@ import discord
 
 from app.config import *
 import app.all_modules # This is important so that all commands get registered
-from bot.commands_exceptions import AccessDeniedError
-from bot.commands_manager import EndDMSession
-from users import User
-from bot_logging import bot_logger
+from app.bot.commands_exceptions import AccessDeniedError
+from app.bot.commands_manager import EndDMSession
+from app.entities.users import User
+from app.bot_logging import bot_logger
 
 
 @client.event

@@ -1,5 +1,5 @@
-from config import cmd_manager
-from bot.commands_exceptions import *
+from app.config import cmd_manager
+from app.bot.commands_exceptions import *
 import requests
 from io import BytesIO
 from PIL import Image

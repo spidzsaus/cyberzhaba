@@ -1,9 +1,9 @@
-from config import cmd_manager
-from bot.commands_exceptions import *
-from db import db_session
-from db.usermodel import SqlUser
-from helper_tools import basic_embed
-from users import User
+from app.config import cmd_manager
+from app.bot.commands_exceptions import *
+from app.db import db_session
+from app.db.usermodel import SqlUser
+from app.helper_tools import basic_embed
+from app.entities.users import User
 
 
 @cmd_manager.command("блеклист")

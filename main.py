@@ -1,6 +1,6 @@
 import os
 
-from app.bot_logging *
+from app.bot_logging import *
 from app.config import *
 from app.handlers import *
 from app.db import db_session

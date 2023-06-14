@@ -1,5 +1,5 @@
-from db.usermodel import SqlUser, SqlBarrellOrgan
-from db import db_session
+from app.db.usermodel import SqlUser, SqlBarrellOrgan
+from app.db import db_session
 import discord
 import os
 

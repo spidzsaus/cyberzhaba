@@ -1,7 +1,7 @@
 import logging
 import logging.handlers
 import sys
-from config import DEBUG
+from app.config import DEBUG
 
 discord_logger = logging.getLogger('discord')
 discord_client_logger = logging.getLogger('discord.client')

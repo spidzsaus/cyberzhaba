@@ -1,10 +1,10 @@
-from config import cmd_manager
-from bot.commands_exceptions import *
+from app.config import cmd_manager
+from app.bot.commands_exceptions import *
 import asyncio
 import discord
-from helper_tools import basic_embed
+from app.helper_tools import basic_embed
 import os
-from barrellorgans import BarellOrgan
+from app.entities.barrellorgans import BarellOrgan
 import datetime as dt
 
 

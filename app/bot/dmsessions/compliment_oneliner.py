@@ -1,5 +1,5 @@
-from bot.commands_manager import DMSession, EndDMSession
-from config import cmd_manager
+from app.bot.commands_manager import DMSession, EndDMSession
+from app.config import cmd_manager
 
 @cmd_manager.dm_session('похвали меня')
 class ComplimentOneliner(DMSession):
