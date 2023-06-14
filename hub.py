@@ -2,19 +2,14 @@ import discord
 import json
 import logging
 import logging.handlers
+import sys
 
 logger = logging.getLogger('discord')
 logging.getLogger('discord.http').setLevel(logging.INFO)
-
-handler = logging.handlers.RotatingFileHandler(
-    filename='bot.log',
-    encoding='utf-8',
-    maxBytes=32 * 1024 * 1024,  # 32 MiB
-)
 dt_fmt = '%Y-%m-%d %H:%M:%S'
 formatter = logging.Formatter('[{asctime}] [{levelname:<8}] {name}: {message}', dt_fmt, style='{')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
+    
+
 
 class EndDMSession(Exception):
     pass
@@ -37,10 +32,29 @@ if __Config__.debug_mode:
     from secret_data import DEBUG_TOKEN
     __Token__ = DEBUG_TOKEN
     logger.setLevel(logging.DEBUG)
+    stdout_handler = logging.StreamHandler(sys.stdout)
+    stdout_handler.setFormatter(formatter)
+    logger.addHandler(stdout_handler)
+    file_handler = logging.handlers.RotatingFileHandler(
+        filename='debug.log',
+        encoding='utf-8',
+        maxBytes=32 * 1024 * 1024,  # 32 MiB
+    )
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+
 else:
     from secret_data import PROD_TOKEN
     __Token__ = PROD_TOKEN
     logger.setLevel(logging.INFO)
+    file_handler = logging.handlers.RotatingFileHandler(
+        filename='production.log',
+        encoding='utf-8',
+        maxBytes=32 * 1024 * 1024,  # 32 MiB
+    )
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+    
 
 
 __Commands__ = {}
