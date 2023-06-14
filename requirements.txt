@@ -3,3 +3,4 @@ eyed3==0.9.7
 Pillow>=9.2.0
 numpy==1.23.2
 SQLAlchemy==1.4.40
+python-dotenv>=1.0.0

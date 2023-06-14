@@ -1,6 +1,8 @@
-secret_data.py
+secret_santa_data.py
 botdata.db
 **/__pycache__/*
 **/venv/*
 FFMPEG/*
 data/*
+**/.env
+**/*.log
