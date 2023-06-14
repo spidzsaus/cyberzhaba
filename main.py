@@ -7,6 +7,8 @@ from app.db import db_session
 
 
 if __name__ == '__main__':
-    db_session.global_init(os.path.join('data', 'botdata.db'))
+    if not os.path.exists('./data'):
+        os.makedirs('./data')
+    db_session.global_init(os.path.join('.', 'data', 'botdata.db'))
     bot_logger.info('Booting up the discord client')
     client.run(TOKEN, log_handler=None)
