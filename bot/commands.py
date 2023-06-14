@@ -22,8 +22,8 @@ def days_delta(msg):
     return delta.days
 
 
-frame = Image.open("frame.png")
-frame2 = Image.open("frame2.png")
+frame = Image.open(os.path.join('assets', 'frame.png'))
+frame2 = Image.open(os.path.join('assets', 'frame2.png'))
 
 @command("карма")
 async def view_karma(msg):

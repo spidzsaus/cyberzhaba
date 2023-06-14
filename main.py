@@ -1,4 +1,6 @@
 import discord
+import os
+
 from hub import __Client__, __Config__, __Token__
 from users import User
 from barrellorgans import BarellOrgan
@@ -40,7 +42,7 @@ async def on_raw_reaction_remove(payload):
     await reaction_event(payload, -1)
 
 if __name__ == '__main__':
-    db_session.global_init('botdata.db')
+    db_session.global_init(os.path.join('data', 'botdata.db'))
     print('|\tBooting up the discord client')
     __Client__.run(__Token__)
     
