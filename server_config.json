@@ -5,6 +5,5 @@
     "channel_whitelist_keywords":["страница"],
     "category_whitelist":[680038952413167680, 1054810672778719262],
     "message_expiration_date":31,
-    "debug_mode": false,
     "prefix": "кж!"
 }

@@ -3,6 +3,8 @@ import sqlalchemy.orm as orm
 from sqlalchemy.orm import Session
 import sqlalchemy.ext.declarative as dec
 
+from bot_logging import bot_logger
+
 SqlAlchemyBase = dec.declarative_base()
 
 __factory = None
@@ -15,7 +17,7 @@ def global_init(db_file):
         return
 
     conn_str = f'sqlite:///{db_file.strip()}?check_same_thread=False'
-    print("|\t" + f"Establishing connection with {conn_str}")
+    bot_logger.info(f"Establishing connection with {conn_str}")
 
     engine = sa.create_engine(conn_str, echo=False)
     __factory = orm.sessionmaker(bind=engine)

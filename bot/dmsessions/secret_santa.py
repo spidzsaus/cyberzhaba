@@ -1,38 +1,20 @@
-from hub import dm_session, DMSession, EndDMSession
 from helper_tools import basic_embed
 import discord
-from secret_data import FEMALE_PRONOUNS
+from secret_santa_data import FEMALE_PRONOUNS
 import os
 import eyed3
 from PIL import Image
 from io import BytesIO
 import requests
 import numpy
-from db import db_session
-from db.usermodel import SqlBarrellOrgan
 from users import User
 from barrellorgans import BarellOrgan
 from secret_santa import *
 
-@dm_session('похвали меня')
-class ComplimentOneliner(DMSession):
-    async def first(self, msg):
-        if msg.author.id == 408980792165924884 or msg.author.id == 731763520416514060 or msg.author.id == 561522627118759956:
-            import random
-            prefix = ['воу,', 'блин,', 'ого', 'ну,', 'ладно,', 'йоу,', '', '', '', '', '']
-            data = [(['звучит', 'вышло', 'вполне', 'а вот тут уже реально', 'вообще', 'объективно', 'достаточно', 'на самом деле'],
-                     ['круто', 'достойно', 'хорош', 'прикольно', 'драйвово', 'мемно', 'диско', 'респектабельно', 'мощно', 'здорово', 'неплохо', 'как-то не очень если честно']),
-                    (['действительно крутой', 'неплохой', 'эпичный', 'мощный', 'правда хороший', 'ЗАЕБИСЬ', 'качёвый блин'],
-                     ['трек']),
-                    (['действительно крутая', 'неплохая', 'эпичная', 'мощная', 'правда хорошая', 'ЗАЕБИСЬ', 'качёвая блин'],
-                     ['песня', 'музыка'])]
-            d = [random.choice(var) for var in random.choice(data)]
-            random.shuffle(d)
-            message = ' '.join([random.choice(prefix)] + d).strip()
-            await msg.channel.send(message + '.')
-        raise EndDMSession
+from bot.commands_manager import DMSession, EndDMSession
+from config import cmd_manager
 
-@dm_session('создать шарманку!')
+@cmd_manager.dm_session('создать шарманку!')
 class BarrellOrganCrafting(DMSession):
     IMG_OFFSET = (118, 39)
     IMG_W = 1044
@@ -378,5 +360,3 @@ class BarrellOrganCrafting(DMSession):
         await msg.channel.send('Благодарю за участие <3! Если передумаешь, ты всегда можешь изменить шарманку, повторно вызвав команду "создать шарманку!", новая шарманка просто встанет на место старой.')
         raise EndDMSession
          
-
-

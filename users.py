@@ -1,7 +1,7 @@
 from db.usermodel import SqlUser, SqlBarrellOrgan
 from db import db_session
 
-from hub import __Client__
+from setup import client
 
 
 class User:
@@ -29,7 +29,7 @@ class User:
         return True
 
     async def DISCORD(self):
-        return await __Client__.fetch_user(self.discord_id)
+        return await client.fetch_user(self.discord_id)
     
     def SQL(self):
         return db_session.create_session().query(SqlUser).filter(
