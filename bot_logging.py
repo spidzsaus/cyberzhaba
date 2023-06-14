@@ -1,8 +1,11 @@
 import logging
+import logging.handlers
 import sys
 from config import DEBUG
 
 discord_logger = logging.getLogger('discord')
+discord_client_logger = logging.getLogger('discord.client')
+discord_gateway_logger = logging.getLogger('discord.gateway')
 discord_http_logger = logging.getLogger('discord.http')
 bot_logger = logging.getLogger('bot')
 
@@ -32,19 +35,13 @@ production_file_handler.setFormatter(formatter)
 
 
 if DEBUG:
-    discord_http_logger.setLevel(logging.DEBUG)
-    discord_logger.setLevel(logging.DEBUG)
-    bot_logger.setLevel(logging.DEBUG)
-    discord_http_logger.addHandler(stdout_handler)
-    discord_http_logger.addHandler(debug_file_handler)
-    discord_logger.addHandler(stdout_handler)
-    discord_logger.addHandler(debug_file_handler)
-    bot_logger.addHandler(stdout_handler)
-    bot_logger.addHandler(debug_file_handler)
+    for logger in (discord_gateway_logger, discord_client_logger, discord_http_logger, 
+                   discord_logger, bot_logger):
+        logger.setLevel(logging.DEBUG)
+        logger.addHandler(stdout_handler)
+        logger.addHandler(debug_file_handler)
 else:
-    discord_http_logger.setLevel(logging.INFO)
-    discord_logger.setLevel(logging.INFO)
-    bot_logger.setLevel(logging.INFO)
-    discord_http_logger.addHandler(production_file_handler)
-    discord_logger.addHandler(production_file_handler)
-    bot_logger.addHandler(production_file_handler)
+    for logger in (discord_gateway_logger, discord_client_logger, discord_http_logger, 
+                   discord_logger, bot_logger):
+        logger.setLevel(logging.INFO)
+        logger.addHandler(production_file_handler)
