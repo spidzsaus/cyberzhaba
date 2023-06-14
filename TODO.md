@@ -1,9 +1,0 @@
-- [x] Add category whitelist support
-- [x] Implement Barrell Organs Event
-- [x] Refactor the code into seperate modules
-- [ ] Add DMSession serialization
-- [ ] Add automatic help hints
-- [ ] Fix user mentioning
-- [x] Swap Ando and Floppa
-- [x] Add craft session resuming
-- [x] Add replacement tables
