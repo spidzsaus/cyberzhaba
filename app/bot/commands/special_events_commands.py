@@ -9,7 +9,7 @@ import os
 
 @cmd_manager.command("деньлогова2022")
 async def logowo_day(msg):
-    frame = Image.open(os.path.join('assets', 'frame.png'))
+    frame = Image.open(os.path.join('app', 'assets', 'frame.png'))
     await msg.channel.send("ща будет жди")
     with requests.get(msg.author.avatar.url) as r:
         img_data = r.content
@@ -25,7 +25,7 @@ async def logowo_day(msg):
 
 @cmd_manager.command("деньлогова2023")
 async def logovo_day(msg):
-    frame2 = Image.open(os.path.join('assets', 'frame2.png'))
+    frame2 = Image.open(os.path.join('app', 'assets', 'frame2.png'))
     await msg.channel.send("ща будет жди")
     with requests.get(msg.author.avatar.url) as r:
         img_data = r.content

@@ -271,11 +271,11 @@ class BarrellOrganCrafting(DMSession):
         img = img.resize((self.IMG_W, self.IMG_H))
         img = img.convert('RGBA')
         texture = numpy.array(img)
-        source = numpy.array(Image.open(os.path.join('assets', 'bomask.png')).convert('RGBA')) / 255
+        source = numpy.array(Image.open(os.path.join('app', 'assets', 'bomask.png')).convert('RGBA')) / 255
         texture = numpy.pad(texture, ((self.PAD_H_U, self.PAD_H_B), (self.PAD_W, self.PAD_W), (0, 0)), 'constant')
         masked = texture * source
         result = Image.fromarray(masked.astype(numpy.uint8))
-        overlay = Image.open(os.path.join('assets', 'booverlay.png')).convert('RGBA')
+        overlay = Image.open(os.path.join('app', 'assets', 'booverlay.png')).convert('RGBA')
         result.paste(overlay, (0, 0), overlay)
         result.save(os.path.join(self.path, 'image.png'), 'PNG')
         
