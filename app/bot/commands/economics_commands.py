@@ -1,9 +1,9 @@
-from app.config import cmd_manager
-from app.bot.commands_exceptions import *
-from app.db import db_session
-from app.db.usermodel import SqlUser
 import math
 import discord
+
+from app import database
+from app.config import cmd_manager
+from app.db.usermodel import SqlUser
 from app.helper_tools import basic_embed
 from app.entities.users import User
 
@@ -20,7 +20,7 @@ async def view_karma(msg):
             embed.color = discord.Color.red()
             await msg.channel.send(embed=embed)
             return
-    duser = await user.DISCORD()
+    duser = await user.discord()
     embed = basic_embed(
         "Профиль " + duser.name, "Постовая карма: " + str(user.karma)
     )
@@ -40,7 +40,7 @@ async def leaderboard(msg):
         except ValueError:
             page = 1
 
-    db_sess = db_session.create_session()
+    db_sess = database.session()
     users = (
         db_sess.query(SqlUser)
         .filter(SqlUser.karma != 0)

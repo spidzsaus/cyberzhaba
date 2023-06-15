@@ -1,7 +1,5 @@
 from app.db.usermodel import SqlUser, SqlBarrellOrgan
-from app.db import db_session
-
-from app.config import client
+from app import client, database
 
 
 class User:
@@ -14,72 +12,71 @@ class User:
                 return User(int(string[3:-1]))
         return False
 
-    def __init__(self, id):
-        self.discord_id = id
-        
-        db_sess = db_session.create_session()
+    def __init__(self, uid):
+        self.discord_id = uid
+
+        db_sess = database.session()
         if not db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
                                              ).first():
-            new = SqlUser(discord_id=id)
+            new = SqlUser(discord_id=uid)
             db_sess.add(new)
             db_sess.commit()
-        return None
 
     def __bool__(self):
         return True
 
-    async def DISCORD(self):
+    async def discord(self):
         return await client.fetch_user(self.discord_id)
-    
-    def SQL(self):
-        return db_session.create_session().query(SqlUser).filter(
+
+    def sql(self):
+        return database.session().query(SqlUser).filter(
             SqlUser.discord_id == self.discord_id).first()
-    
+
     def organ(self):
-        return db_session.create_session().query(SqlBarrellOrgan).filter(
-            SqlBarrellOrgan.owner == self.SQL().id).first()
+        return database.session().query(SqlBarrellOrgan).filter(
+            SqlBarrellOrgan.owner == self.sql().id).first()
 
     @property
     def karma(self):
-        db_sess = db_session.create_session()
+        db_sess = database.session()
         return db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
                                              ).first().karma
 
     def is_blacklisted(self):
-        db_sess = db_session.create_session()
+        db_sess = database.session()
         return db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
                                              ).first().blacklist
 
     def add_to_blacklist(self):
-        db_sess = db_session.create_session()
+        db_sess = database.session()
         user = db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
                                              ).first()
         user.blacklist = True
         db_sess.commit()
 
     def make_mod(self):
-        db_sess = db_session.create_session()
+        db_sess = database.session()
         user = db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
                                              ).first()
         user.mod = True
         db_sess.commit()
 
     def unmod(self):
-        db_sess = db_session.create_session()
+        db_sess = database.session()
         user = db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
                                              ).first()
         user.mod = False
-        db_sess.commit()      
+        db_sess.commit()
 
     def remove_from_blacklist(self):
-        db_sess = db_session.create_session()
+        db_sess = database.session()
         user = db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
                                              ).first()
         user.blacklist = False
         db_sess.commit()
 
     def add_karma(self, add):
-        db_sess = db_session.create_session()
+        db_sess = database.session()
         user = db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
                                              ).first()
         user.karma = user.karma + add

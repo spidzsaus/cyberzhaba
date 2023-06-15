@@ -1,17 +1,18 @@
-from app.config import cmd_manager
-from app.bot.commands_exceptions import *
-import asyncio
-import discord
-from app.helper_tools import basic_embed
 import os
+import asyncio
+from datetime import datetime
+
+import discord
+
+from app.config import cmd_manager
+from app.helper_tools import basic_embed
 from app.entities.barrellorgans import BarellOrgan
-import datetime as dt
 
 
 @cmd_manager.command("шарманка")
 async def barrel_organ(msg):
     user = msg.author
-    if dt.datetime.now() < dt.datetime(2023, 1, 1, 8, 30, 0, 0):
+    if datetime.now() < datetime(2023, 1, 1, 8, 30, 0, 0):
         embed = basic_embed(
             title="Рано...",
             text="christmas! just a week away! oh wow! christmas is in a week!",

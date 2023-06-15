@@ -1,18 +1,19 @@
-from app.config import cmd_manager
-from app.bot.commands_exceptions import *
-import requests
-from io import BytesIO
-from PIL import Image
-import discord
 import os
+from io import BytesIO
+
+import discord
+import requests
+from PIL import Image
+
+from app.config import cmd_manager
 
 
 @cmd_manager.command("деньлогова2022")
 async def logowo_day(msg):
     frame = Image.open(os.path.join('assets', 'frame.png'))
     await msg.channel.send("ща будет жди")
-    with requests.get(msg.author.avatar.url) as r:
-        img_data = r.content
+    with requests.get(msg.author.avatar.url, timeout=10) as req:
+        img_data = req.content
         ava = Image.open(BytesIO(img_data))
     ava = ava.resize((2000, 2000))
     ava.paste(frame, (0, 0), frame)
@@ -23,12 +24,13 @@ async def logowo_day(msg):
             file=discord.File(fp=image_binary, filename="result.png")
         )
 
+
 @cmd_manager.command("деньлогова2023")
 async def logovo_day(msg):
     frame2 = Image.open(os.path.join('assets', 'frame2.png'))
     await msg.channel.send("ща будет жди")
-    with requests.get(msg.author.avatar.url) as r:
-        img_data = r.content
+    with requests.get(msg.author.avatar.url, timeout=10) as req:
+        img_data = req.content
         ava = Image.open(BytesIO(img_data))
     ava = ava.resize((1024, 1024))
     ava.paste(frame2, (0, 0), frame2)

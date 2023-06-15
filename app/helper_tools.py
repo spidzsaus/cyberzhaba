@@ -1,5 +1,6 @@
 import discord
 
+
 def basic_embed(title, text, *fields, color=discord.Color.green()):
     emb = discord.Embed(color=color,
                         title=title,
