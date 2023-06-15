@@ -7,17 +7,20 @@ import discord
 import eyed3
 from PIL import Image
 
-from app.helper_tools import basic_embed
+from app.helper_tools import basic_embed, find_ffmpeg, broken_cyberzhaba
 from app.secret_santa_data import FEMALE_PRONOUNS
 from app.entities.users import User
 from app.entities.barrellorgans import BarellOrgan
-from app.entities.secret_santa import SecretSantaPlayer
+try:
+    from app.entities.secret_santa import SecretSantaPlayer
+    DISABLED = False
+except ImportError:
+    DISABLED = True
 
-from app.bot.commands_manager import DMSession, EndDMSession
-from app.config import cmd_manager
+from app.bot.dm_sessions import DMSession, EndDMSession
 
 
-@cmd_manager.dm_session('создать шарманку!')
+# @cmd_manager.dm_session('создать шарманку!')
 class BarrellOrganCrafting(DMSession):
     IMG_OFFSET = (118, 39)
     IMG_W = 1044
@@ -59,6 +62,16 @@ class BarrellOrganCrafting(DMSession):
             return self.name
 
     async def first(self, msg):
+        if DISABLED:
+            await msg.channel.send(embed=broken_cyberzhaba(
+                'Эвент отключён, т.к. он не был сконфигурирован.'
+            ))
+            raise EndDMSession
+        if not find_ffmpeg():
+            await msg.channel.send(embed=broken_cyberzhaba(
+                'ffmpeg не найден. обратитесь к вашему судебному администратору.'
+            ))
+            raise EndDMSession
         self.secret_santa_player = SecretSantaPlayer(msg.author.id)
 
         if not self.secret_santa_player:
@@ -296,7 +309,9 @@ class BarrellOrganCrafting(DMSession):
         img = img.resize((self.IMG_W, self.IMG_H))
         img = img.convert('RGBA')
         texture = numpy.array(img)
-        source = numpy.array(Image.open(os.path.join('assets', 'bomask.png')).convert('RGBA')) / 255
+        source = numpy.array(
+            Image.open(os.path.join('app', 'assets', 'bomask.png')
+        ).convert('RGBA')) / 255
         texture = numpy.pad(
             texture,
             ((self.PAD_H_U, self.PAD_H_B), (self.PAD_W, self.PAD_W), (0, 0)),
@@ -304,7 +319,9 @@ class BarrellOrganCrafting(DMSession):
         )
         masked = texture * source
         result = Image.fromarray(masked.astype(numpy.uint8))
-        overlay = Image.open(os.path.join('assets', 'booverlay.png')).convert('RGBA')
+        overlay = Image.open(
+            os.path.join('app', 'assets', 'booverlay.png')
+        ).convert('RGBA')
         result.paste(overlay, (0, 0), overlay)
         result.save(os.path.join(self.path, 'image.png'), 'PNG')
 

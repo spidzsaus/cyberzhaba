@@ -1,9 +1,8 @@
 import random
-from app.bot.commands_manager import DMSession, EndDMSession
-from app.config import cmd_manager
+from app.bot.dm_sessions import DMSession, EndDMSession
 
 
-@cmd_manager.dm_session('похвали меня')
+# @cmd_manager.dm_session('похвали меня')
 class ComplimentOneliner(DMSession):
     async def first(self, msg):
         if msg.author.id in (408980792165924884, 731763520416514060, 561522627118759956):

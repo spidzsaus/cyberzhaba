@@ -9,7 +9,12 @@ SqlAlchemyBase = dec.declarative_base()
 
 class DBConnection:
     def __init__(self, db_file):
-        conn_str = f'sqlite:///{str(db_file).strip()}?check_same_thread=False'
+        self.db_file = db_file
+        self.factory = None
+        self.connected = False
+
+    def connect(self):
+        conn_str = f'sqlite:///{str(self.db_file).strip()}?check_same_thread=False'
         bot_logger.info("Establishing connection with %s", conn_str)
 
         engine = sa.create_engine(conn_str, echo=False)
@@ -19,5 +24,9 @@ class DBConnection:
 
         SqlAlchemyBase.metadata.create_all(engine)
 
+        self.connected = True
+
     def session(self) -> Session:
+        if not self.connected:
+            self.connect()
         return self.factory()

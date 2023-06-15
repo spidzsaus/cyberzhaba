@@ -2,7 +2,7 @@ import os
 import discord
 
 from app.db.usermodel import SqlUser, SqlBarrellOrgan
-from app import database
+from app.db import database
 
 
 class BarellOrgan:

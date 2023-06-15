@@ -1,5 +1,5 @@
 from app.db.usermodel import SqlUser, SqlBarrellOrgan
-from app import client, database
+from app.db import database
 
 
 class User:
@@ -24,9 +24,6 @@ class User:
 
     def __bool__(self):
         return True
-
-    async def discord(self):
-        return await client.fetch_user(self.discord_id)
 
     def sql(self):
         return database.session().query(SqlUser).filter(
