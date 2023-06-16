@@ -10,8 +10,8 @@ discord_http_logger = logging.getLogger('discord.http')
 bot_logger = logging.getLogger('bot')
 
 
-dt_fmt = '%Y-%m-%d %H:%M:%S'
-formatter = logging.Formatter('[{asctime}] [{levelname:<8}] {name}: {message}', dt_fmt, style='{')
+DT_FMT = '%Y-%m-%d %H:%M:%S'
+formatter = logging.Formatter('[{asctime}] [{levelname:<8}] {name}: {message}', DT_FMT, style='{')
 
 
 stdout_handler = logging.StreamHandler(sys.stdout)
@@ -35,13 +35,13 @@ production_file_handler.setFormatter(formatter)
 
 
 if DEBUG:
-    for logger in (discord_gateway_logger, discord_client_logger, discord_http_logger, 
+    for logger in (discord_gateway_logger, discord_client_logger, discord_http_logger,
                    discord_logger, bot_logger):
         logger.setLevel(logging.DEBUG)
         logger.addHandler(stdout_handler)
         logger.addHandler(debug_file_handler)
 else:
-    for logger in (discord_gateway_logger, discord_client_logger, discord_http_logger, 
+    for logger in (discord_gateway_logger, discord_client_logger, discord_http_logger,
                    discord_logger, bot_logger):
         logger.setLevel(logging.INFO)
         logger.addHandler(production_file_handler)
