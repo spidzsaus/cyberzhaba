@@ -20,7 +20,7 @@ class DMSessionsCog(commands.Cog):
             return
         if message.author.id not in self.active_sessions:
             target_session = [
-                session_type(message) for keyword, session_type 
+                session_type(message) for keyword, session_type
                 in self.sessions.items() if message.content.startswith(keyword)
             ][0]
             if target_session:
