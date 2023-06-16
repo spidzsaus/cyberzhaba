@@ -34,7 +34,7 @@ class SpecialEventsCog(commands.Cog):
 
     @commands.hybrid_command(
         name="деньлогова2023",
-        description="сгенерировать аватарку на день логова 2022."
+        description="сгенерировать аватарку на день логова 2023."
     )
     async def logovo_day(self, ctx):
         frame2 = Image.open(os.path.join('app', 'assets', 'frame2.png'))
