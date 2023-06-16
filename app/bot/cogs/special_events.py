@@ -11,7 +11,10 @@ class SpecialEventsCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="деньлогова2022")
+    @commands.hybrid_command(
+        name="деньлогова2022",
+        description="сгенерировать аватарку на день логова 2022."
+    )
     async def logowo_day(self, ctx):
         frame = Image.open(os.path.join('app', 'assets', 'frame.png'))
         if not ctx.interaction:
@@ -29,7 +32,10 @@ class SpecialEventsCog(commands.Cog):
                 file=discord.File(fp=image_binary, filename="result.png")
             )
 
-    @commands.hybrid_command(name="деньлогова2023")
+    @commands.hybrid_command(
+        name="деньлогова2023",
+        description="сгенерировать аватарку на день логова 2023."
+    )
     async def logovo_day(self, ctx):
         frame2 = Image.open(os.path.join('app', 'assets', 'frame2.png'))
         if not ctx.interaction:
