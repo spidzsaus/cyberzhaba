@@ -20,7 +20,7 @@ class EconomicsCog(commands.Cog):
         name="карма",
         description="посмотреть свою или чью-то карму."
     )
-    async def view_karma(self, ctx, duser: typing.Optional[discord.Member]):
+    async def view_karma(self, ctx, duser: discord.Member | None):
         # if len(args) == 1:
         #     user = User(msg.author.id)
         # else:
