@@ -1,5 +1,4 @@
 import math
-import typing
 
 import discord
 from discord.ext import commands
@@ -21,15 +20,6 @@ class EconomicsCog(commands.Cog):
         description="посмотреть свою или чью-то карму."
     )
     async def view_karma(self, ctx, duser: discord.Member | None):
-        # if len(args) == 1:
-        #     user = User(msg.author.id)
-        # else:
-        #     user = User.from_string(args[1])
-        #     if not user:
-        #         embed = basic_embed(":x: Ээээ....", "кто?")
-        #         embed.color = discord.Color.red()
-        #         await msg.channel.send(embed=embed)
-        #         return
         if not duser:
             duser = ctx.author
         user = User(duser.id)
