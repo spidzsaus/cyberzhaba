@@ -28,11 +28,12 @@ class ModerationCog(commands.Cog):
             embed.add_field(name=str(i + 1) + ". " + user.name, value="_ _")
         await ctx.send(embed=embed)
 
-    @discord.app_commands.rename(discord_user="цель")
     @blacklist.command(
         name="добавить",
         description="добавить кого-то в чёрный список."
     )
+    @discord.app_commands.rename(discord_user="цель")
+    @discord.app_commands.describe(discord_user="кого добавить в список")
     async def blacklist_add(self, ctx, discord_user: discord.User):
         user = User(discord_user.id)
         user.add_to_blacklist()
@@ -44,11 +45,12 @@ class ModerationCog(commands.Cog):
             embed.set_thumbnail(url=discord_user.display_avatar.url)
         await ctx.send(embed=embed)
 
-    @discord.app_commands.rename(discord_user="цель")
     @blacklist.command(
         name="убрать",
         description="убрать кого-то из чёрного списка."
     )
+    @discord.app_commands.rename(discord_user="цель")
+    @discord.app_commands.describe(discord_user="кого убрать из списка")
     async def blacklist_remove(self, ctx, discord_user: discord.User):
         user = User(discord_user.id)
         user.remove_from_blacklist()

@@ -14,11 +14,12 @@ class EconomicsCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @discord.app_commands.rename(duser="цель")
     @commands.hybrid_command(
         name="карма",
         description="посмотреть свою или чью-то карму."
     )
+    @discord.app_commands.rename(duser="цель")
+    @discord.app_commands.describe(duser='чью карму посмотреть')
     async def view_karma(self, ctx, duser: discord.Member | None):
         if not duser:
             duser = ctx.author
@@ -31,11 +32,12 @@ class EconomicsCog(commands.Cog):
         await ctx.send(embed=embed)
 
 
-    @discord.app_commands.rename(duser="номер страницы")
     @commands.hybrid_command(
         name="лидеры",
         description="топ кармов."
     )
+    @discord.app_commands.rename(page="номер_страницы")
+    @discord.app_commands.describe(page='какую страницу открыть')
     async def leaderboard(self, ctx, page: int = 1):
         db_sess = database.session()
         users = (
