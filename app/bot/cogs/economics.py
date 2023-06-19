@@ -20,7 +20,7 @@ class EconomicsCog(commands.Cog):
     )
     @discord.app_commands.rename(duser="цель")
     @discord.app_commands.describe(duser='чью карму посмотреть')
-    async def view_karma(self, ctx, duser: discord.Member | None):
+    async def view_karma(self, ctx, duser: discord.User | None):
         if not duser:
             duser = ctx.author
         user = User(duser.id)
