@@ -97,7 +97,8 @@ async def on_command_error(ctx, error):
         embed = basic_embed(':x: Ээээ...', 'что? (слишком много аргументов)')
     elif isinstance(error, commands.BadArgument):
         embed = basic_embed(':x: Ээээ...', 'что? (неправильный аргумент)')
-    elif isinstance(error, commands.CommandInvokeError):
+    elif isinstance(error, commands.CommandInvokeError) or \
+         isinstance(error, commands.HybridCommandError):
         embed = broken_cyberzhaba(
             f'ошибка класса {type(error.original).__name__}'
         )
