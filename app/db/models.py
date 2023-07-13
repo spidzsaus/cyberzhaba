@@ -20,3 +20,11 @@ class SqlBarrellOrgan(SqlAlchemyBase):
     owner = sqlalchemy.Column(sqlalchemy.Integer)
     name = sqlalchemy.Column(sqlalchemy.String)
     label = sqlalchemy.Column(sqlalchemy.Text)
+
+class SqlReactionRole(SqlAlchemyBase):
+    __tablename__ = 'reactionroles'
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
+    channel_id = sqlalchemy.Column(sqlalchemy.Integer)
+    message_id = sqlalchemy.Column(sqlalchemy.Integer)
+    reaction_id = sqlalchemy.Column(sqlalchemy.Integer)
+    role_id = sqlalchemy.Column(sqlalchemy.Integer)

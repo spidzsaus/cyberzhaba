@@ -1,4 +1,4 @@
-from app.db.usermodel import SqlUser, SqlBarrellOrgan
+from app.db.models import SqlUser, SqlBarrellOrgan
 from app.db import database
 
 
