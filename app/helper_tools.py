@@ -1,5 +1,7 @@
+import emoji
 import shutil
 import discord
+from discord.ext import commands
 
 
 def basic_embed(title, text, *fields, color=discord.Color.green()):
@@ -49,3 +51,17 @@ def async_none_on_catch(exception: Exception):
                 return None
         return new_func
     return wrapper
+
+def UnicodeEmoji(val):
+    '''Checks if val is a unicode emoji'''
+    val = str(val)
+    if not emoji.is_emoji(val):
+        raise TypeError(f'{val} is not a single emoji')
+    return val
+
+class AnyEmojiConverter(commands.Converter):
+    async def convert(self, ctx, argument):
+        try:
+            return await commands.EmojiConverter().convert(ctx, argument)
+        except commands.EmojiNotFound:
+            return UnicodeEmoji(argument)

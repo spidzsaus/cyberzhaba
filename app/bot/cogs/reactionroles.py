@@ -5,7 +5,7 @@ import discord
 from discord.ext import commands
 
 from app.db.models import SqlReactionRole
-from app.helper_tools import basic_embed
+from app.helper_tools import basic_embed, AnyEmojiConverter
 from app.entities.reactionroles import ReactionRole
 from app.config import logovo_config
 from app.db import database
@@ -27,7 +27,11 @@ class ReactionRolesCog(commands.Cog):
         channel = await self.bot.fetch_channel(payload.channel_id)
         message = await channel.fetch_message(payload.message_id)
         member = await channel.guild.fetch_member(payload.user_id)
-        emoji = await channel.guild.fetch_emoji(payload.emoji.id)
+        raw_emoji = payload.emoji
+        if raw_emoji.id is not None:
+            emoji = await channel.guild.fetch_emoji(raw_emoji.id)
+        else:
+            emoji = str(raw_emoji)
         
         rr = ReactionRole.search(message=message, reaction=emoji)
         if rr:
@@ -95,7 +99,7 @@ class ReactionRolesCog(commands.Cog):
         ctx, 
         message: discord.Message,
         role: discord.Role,
-        emoji: discord.Emoji
+        emoji: AnyEmojiConverter
     ):
         await message.add_reaction(emoji)
         rr = ReactionRole.create(message, emoji, role)
