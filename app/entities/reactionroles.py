@@ -9,7 +9,8 @@ class ReactionRole:
     id: int
     channel_id: int
     message_id: int
-    reaction_id: int
+    reaction_id: int | None
+    reaction_char: str | None
     role_id: int
 
     @classmethod
@@ -21,17 +22,26 @@ class ReactionRole:
         return reaction_role and cls(reaction_role)
 
     @classmethod
-    def search(cls, message: discord.Message, reaction: discord.Emoji):
+    def search(cls, message: discord.Message, reaction: discord.Emoji | str):
         db_sess = database.session()
-        reaction_role = db_sess.query(SqlReactionRole).filter(
+        query = db_sess.query(SqlReactionRole).filter(
             SqlReactionRole.channel_id == message.channel.id,
             SqlReactionRole.message_id == message.id,
-            SqlReactionRole.reaction_id == reaction.id
-        ).first()
+        )
+        match reaction:
+            case discord.Emoji():
+                query = query.filter(
+                    SqlReactionRole.reaction_id == reaction.id
+                )
+            case _:
+                query = query.filter(
+                    SqlReactionRole.reaction_char == reaction
+                )
+        reaction_role = query.first()
         return reaction_role and cls(reaction_role)
 
     @classmethod
-    def create(cls, message: discord.Message, reaction: discord.Emoji, role: discord.Role):
+    def create(cls, message: discord.Message, reaction: discord.Emoji | str, role: discord.Role):
         db_sess = database.session()
         unique_test = cls.search(message, reaction)
         if unique_test:
@@ -40,7 +50,8 @@ class ReactionRole:
         reaction_role = SqlReactionRole(
             channel_id=message.channel.id,
             message_id=message.id,
-            reaction_id=reaction.id,
+            reaction_id=reaction.id if isinstance(reaction, discord.Emoji) else None,
+            reaction_char=reaction if isinstance(reaction, str) else None,
             role_id=role.id 
         )
         db_sess.add(reaction_role)
@@ -54,6 +65,7 @@ class ReactionRole:
         self.channel_id = reaction_role.channel_id
         self.message_id = reaction_role.message_id
         self.reaction_id = reaction_role.reaction_id
+        self.reaction_char = reaction_role.reaction_char
         self.role_id = reaction_role.role_id
 
     @async_none_on_catch(discord.NotFound)
@@ -67,7 +79,8 @@ class ReactionRole:
         return channel.guild.get_role(self.role_id)
 
     @async_none_on_catch(discord.NotFound)
-    async def get_emoji(self, client: discord.Client) -> discord.Emoji:
+    async def get_emoji(self, client: discord.Client) -> discord.Emoji | str:
+        if self.reaction_char: return self.reaction_char
         channel = await client.fetch_channel(self.channel_id)
         return channel.guild.get_emoji(self.reaction_id)
 

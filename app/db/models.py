@@ -26,5 +26,6 @@ class SqlReactionRole(SqlAlchemyBase):
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     channel_id = sqlalchemy.Column(sqlalchemy.Integer)
     message_id = sqlalchemy.Column(sqlalchemy.Integer)
-    reaction_id = sqlalchemy.Column(sqlalchemy.Integer)
+    reaction_id = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
+    reaction_char = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     role_id = sqlalchemy.Column(sqlalchemy.Integer)
