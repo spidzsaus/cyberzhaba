@@ -6,7 +6,7 @@ Welcome to Cyberzhaba official source code. Cyberzhaba is a discord bot made exc
 - A secret santa game
 - Reaction roles
 ## Maintainers
-- @spidzsaus
-- @ilyamikheevcoder
+- [@spidzsaus](https://github.com/spidzsaus)
+- [@ilyamikheevcoder](https://github.com/ilyamikheevcoder)
 
-Special thanks to Ilya Mikheev for huge help with app architecture and tech support of the project
+Special thanks to [Ilya Mikheev](https://github.com/ilyamikheevcoder) for huge help with app architecture and tech support of the project
