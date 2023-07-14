@@ -15,6 +15,7 @@ from app.bot.cogs.special_events import SpecialEventsCog
 from app.bot.cogs.economics import EconomicsCog
 from app.bot.cogs.dm_sessions import DMSessionsCog
 from app.bot.cogs.barrel_organs import BarrelOrgansCog
+from app.bot.cogs.reactionroles import ReactionRolesCog
 
 from app.bot.dmsessions.compliment_oneliner import ComplimentOneliner
 from app.bot.dmsessions.secret_santa import BarrellOrganCrafting
@@ -44,11 +45,12 @@ async def main():
         await client.add_cog(SpecialEventsCog(client))
         await client.add_cog(EconomicsCog(client))
         await client.add_cog(BarrelOrgansCog(client))
+        await client.add_cog(ReactionRolesCog(client))
         await client.add_cog(DMSessionsCog(client,
             {
                 "похвали меня": ComplimentOneliner,
                 "создать шарманку!": BarrellOrganCrafting
             }
         ))
-
+        
         await client.start(TOKEN)

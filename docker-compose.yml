@@ -5,3 +5,4 @@ services:
         - .env
     volumes:
         - ./data:/bot_dir/data
+    restart: always

@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from app.db.usermodel import SqlUser
+from app.db.models import SqlUser
 from app.helper_tools import basic_embed
 from app.entities.users import User
 from app.checks import is_bot_moderator
