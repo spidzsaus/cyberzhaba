@@ -28,3 +28,24 @@ def find_ffmpeg():
     if not executable:
         executable = shutil.which('FFMPEG/ffmpeg.x86_64')
     return executable
+
+
+def none_on_catch(exception: Exception):
+    def wrapper(func):
+        def new_func(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except exception:
+                return None
+        return new_func
+    return wrapper
+
+def async_none_on_catch(exception: Exception):
+    def wrapper(func):
+        async def new_func(*args, **kwargs):
+            try:
+                return await func(*args, **kwargs)
+            except exception:
+                return None
+        return new_func
+    return wrapper
