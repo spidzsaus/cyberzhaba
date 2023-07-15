@@ -52,5 +52,5 @@ async def main():
                 "создать шарманку!": BarrellOrganCrafting
             }
         ))
-        
+
         await client.start(TOKEN)
