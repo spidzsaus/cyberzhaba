@@ -21,6 +21,7 @@ class SqlBarrellOrgan(SqlAlchemyBase):
     name = sqlalchemy.Column(sqlalchemy.String)
     label = sqlalchemy.Column(sqlalchemy.Text)
 
+
 class SqlReactionRole(SqlAlchemyBase):
     __tablename__ = 'reactionroles'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)

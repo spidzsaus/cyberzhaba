@@ -14,7 +14,8 @@ class MissingFFMPEGError(commands.CheckFailure):
 
 def is_bot_moderator():
     async def predicate(ctx):
-        if ctx.author.id == 408980792165924884: return True
+        if ctx.author.id == 408980792165924884:
+            return True
         if not User(ctx.author.id).sql().mod:
             raise BotModeratorsOnlyError()
         return True

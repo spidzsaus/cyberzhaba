@@ -7,7 +7,6 @@ from discord.ext import commands
 from app.db.models import SqlReactionRole
 from app.helper_tools import basic_embed, AnyEmojiConverter
 from app.entities.reactionroles import ReactionRole
-from app.config import logovo_config
 from app.db import database
 from app.checks import is_bot_moderator
 from app.exceptions import NotFound
@@ -32,7 +31,7 @@ class ReactionRolesCog(commands.Cog):
             emoji = await channel.guild.fetch_emoji(raw_emoji.id)
         else:
             emoji = str(raw_emoji)
-        
+
         rr = ReactionRole.search(message=message, reaction=emoji)
         if rr:
             await message.remove_reaction(emoji, member)
@@ -62,7 +61,7 @@ class ReactionRolesCog(commands.Cog):
             .limit(10)
             .all()
         )
-        
+
         text = ""
         for rr in reactionroles:
             rr_entity = ReactionRole(rr)
@@ -79,7 +78,7 @@ class ReactionRolesCog(commands.Cog):
         )
 
         await ctx.send(embed=embed)
-    
+
     @reactionrole.command(
         name='создать',
         description='создать галочку'
@@ -95,19 +94,19 @@ class ReactionRolesCog(commands.Cog):
         emoji='эмодзи, которое будет галочкой галочного сообщения'
     )
     async def reactionrole_create(
-        self, 
-        ctx, 
+        self,
+        ctx,
         message: discord.Message,
         role: discord.Role,
         emoji: AnyEmojiConverter
     ):
         await message.add_reaction(emoji)
-        rr = ReactionRole.create(message, emoji, role)
+        ReactionRole.create(message, emoji, role)
         await ctx.send(embed=basic_embed(
             'Готово!',
             'Галочка создана'
         ))
-    
+
     @reactionrole.command(
         name='удалить',
         description='удалить галочку'

@@ -1,5 +1,5 @@
-import emoji
 import shutil
+import emoji
 import discord
 from discord.ext import commands
 
@@ -42,6 +42,7 @@ def none_on_catch(exception: Exception):
         return new_func
     return wrapper
 
+
 def async_none_on_catch(exception: Exception):
     def wrapper(func):
         async def new_func(*args, **kwargs):
@@ -52,16 +53,18 @@ def async_none_on_catch(exception: Exception):
         return new_func
     return wrapper
 
-def UnicodeEmoji(val):
+
+def assert_unicode_emoji(val):
     '''Checks if val is a unicode emoji'''
     val = str(val)
     if not emoji.is_emoji(val):
         raise TypeError(f'{val} is not a single emoji')
     return val
 
+
 class AnyEmojiConverter(commands.Converter):
     async def convert(self, ctx, argument):
         try:
             return await commands.EmojiConverter().convert(ctx, argument)
         except commands.EmojiNotFound:
-            return UnicodeEmoji(argument)
+            return assert_unicode_emoji(argument)

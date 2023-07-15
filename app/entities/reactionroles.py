@@ -52,7 +52,7 @@ class ReactionRole:
             message_id=message.id,
             reaction_id=reaction.id if isinstance(reaction, discord.Emoji) else None,
             reaction_char=reaction if isinstance(reaction, str) else None,
-            role_id=role.id 
+            role_id=role.id
         )
         db_sess.add(reaction_role)
         db_sess.commit()
@@ -80,7 +80,8 @@ class ReactionRole:
 
     @async_none_on_catch(discord.NotFound)
     async def get_emoji(self, client: discord.Client) -> discord.Emoji | str:
-        if self.reaction_char: return self.reaction_char
+        if self.reaction_char:
+            return self.reaction_char
         channel = await client.fetch_channel(self.channel_id)
         return channel.guild.get_emoji(self.reaction_id)
 
