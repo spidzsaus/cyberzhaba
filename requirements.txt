@@ -1,6 +1,6 @@
 discord~=2.3.0
 eyed3~=0.9.7
-Pillow~=9.2.0
+pillow>=9.3.0
 numpy~=1.23.2
 SQLAlchemy~=1.4.40
 python-dotenv~=1.0.0
