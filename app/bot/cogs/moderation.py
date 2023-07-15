@@ -34,6 +34,7 @@ class ModerationCog(commands.Cog):
     )
     @discord.app_commands.rename(discord_user="цель")
     @discord.app_commands.describe(discord_user="кого добавить в список")
+    @is_bot_moderator()
     async def blacklist_add(self, ctx, discord_user: discord.User):
         user = User(discord_user.id)
         user.add_to_blacklist()
@@ -51,6 +52,7 @@ class ModerationCog(commands.Cog):
     )
     @discord.app_commands.rename(discord_user="цель")
     @discord.app_commands.describe(discord_user="кого убрать из списка")
+    @is_bot_moderator()
     async def blacklist_remove(self, ctx, discord_user: discord.User):
         user = User(discord_user.id)
         user.remove_from_blacklist()

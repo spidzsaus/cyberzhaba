@@ -93,6 +93,7 @@ class ReactionRolesCog(commands.Cog):
         role='роль, присваемая по нажатию на галочку',
         emoji='эмодзи, которое будет галочкой галочного сообщения'
     )
+    @is_bot_moderator()
     async def reactionrole_create(
         self,
         ctx,
@@ -114,6 +115,7 @@ class ReactionRolesCog(commands.Cog):
     @discord.app_commands.rename(
         rrid='id'
     )
+    @is_bot_moderator()
     async def reactionrole_delete(self, ctx, rrid: int):
         db_sess = database.session()
         reaction_role = db_sess.query(SqlReactionRole).filter(
