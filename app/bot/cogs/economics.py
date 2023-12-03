@@ -14,6 +14,43 @@ class EconomicsCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+
+    @commands.hybrid_command(
+        name="карма-каналы",
+        description="список каналов и категорий, в которых засчитывается карма"
+    )
+    async def karma_channel_list(self, ctx):
+        result = ""
+        for category_id in logovo_config['category_whitelist']:
+            category = self.bot.get_channel(category_id)
+            if category:
+                result += f'* Вся категория **{category.name}**\n'
+        # this is a workaround in order to not create a separate config
+        # entry for guilds
+        guilds = set()
+        for channel_id in logovo_config['channel_whitelist']:
+            channel = self.bot.get_channel(channel_id)
+            if channel:
+                guilds.add(channel.guild)
+        for guild in guilds:
+            for channel in guild.channels:
+                if channel.category and channel.category.id \
+                    in logovo_config['category_whitelist']:
+                    continue
+                channel_whitelisted = channel.id in logovo_config['channel_whitelist']
+                keyword_whitelisted = True in [
+                    word in channel.name for word in
+                    logovo_config['channel_whitelist_keywords']
+                ]
+                if channel_whitelisted or keyword_whitelisted:
+                    result += f'* <#{channel.id}>\n'
+        embed = basic_embed(
+            title="Все каналы с работающей кармой",
+            text=result
+        )
+        await ctx.send(embed=embed)
+
+
     @commands.hybrid_command(
         name="карма",
         description="посмотреть свою или чью-то карму."
