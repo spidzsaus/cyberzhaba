@@ -5,4 +5,5 @@ services:
         - .env
     volumes:
         - ./data:/bot_dir/data
+        - ./server_config.json:/bot_dir/server_config.json
     restart: always
