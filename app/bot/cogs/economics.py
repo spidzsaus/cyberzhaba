@@ -6,6 +6,7 @@ from discord.ext import commands
 from app.db.models import SqlUser
 from app.helper_tools import basic_embed
 from app.entities.users import User
+from app.checks import is_bot_moderator
 from app.config import logovo_config
 from app.db import database
 
@@ -101,6 +102,46 @@ class EconomicsCog(commands.Cog):
         )
 
         await ctx.send(embed=embed)
+
+    @commands.hybrid_command(
+        name="переместитькарму",
+        description="переместить карму с участника на участника."
+    )
+    @discord.app_commands.rename(
+        source="источник", target="цель", confirm_code="код"
+    )
+    @discord.app_commands.describe(
+        source="кто ПОТЕРЯЕТ карму", target="кто ПОЛУЧИТ карму",
+        confirm_code="код подтверждения - введите команду без него, чтобы получить"
+    )
+    @is_bot_moderator()
+    async def move_karma(
+        self, ctx, source: discord.User, target: discord.User,
+        confirm_code: str | None
+    ):
+        real_confirm_code = str(source.id)[-4:-1] + str(target.id)[-4:-1]
+        if not confirm_code:
+            await ctx.send(
+                f"Переместить карму с участника `{source.name}` на `{target.name}`\
+...вы уверены? **ЭТО НЕОБРАТИМАЯ ОПЕРАЦИЯ.**\n\n\
+Перезапустите команду с кодом `{real_confirm_code}`, если да."
+            )
+            return
+        if confirm_code != real_confirm_code:
+            await ctx.send(f"Неправильный код. Введите код `{real_confirm_code}`.")
+            return
+
+        db_sess = database.session()
+        source_db = db_sess.query(SqlUser).filter(
+            SqlUser.discord_id == source.id).first()
+        target_db = db_sess.query(SqlUser).filter(
+            SqlUser.discord_id == target.id).first()
+        target_db.karma += source_db.karma
+        source_db.karma = 0
+        db_sess.commit()
+
+        await ctx.send(f"Дело сделано... \
+У {target.mention} теперь **{target_db.karma}** кармы.")
 
     async def reaction_event(self, payload, meaning=1):
         channel = await self.bot.fetch_channel(payload.channel_id)
