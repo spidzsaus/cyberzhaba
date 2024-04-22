@@ -7,6 +7,6 @@ Welcome to Cyberzhaba official source code. Cyberzhaba is a discord bot made exc
 - Reaction roles
 ## Maintainers
 - [@spidzsaus](https://github.com/spidzsaus)
-- [@ilyamikheevcoder](https://github.com/ilyamikheevcoder)
+- [@ilyamikcoder](https://github.com/ilyamikcoder)
 
-Special thanks to [Ilya Mikheev](https://github.com/ilyamikheevcoder) for huge help with app architecture and tech support of the project
+Special thanks to [Ilya Mikheev](https://github.com/ilyamikcoder) for huge help with app architecture and tech support of the project
