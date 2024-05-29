@@ -33,12 +33,6 @@ class User:
         return database.session().query(SqlBarrellOrgan).filter(
             SqlBarrellOrgan.owner == self.sql().id).first()
 
-    @property
-    def karma(self):
-        db_sess = database.session()
-        return db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
-                                             ).first().karma
-
     def is_blacklisted(self):
         db_sess = database.session()
         return db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
@@ -70,11 +64,4 @@ class User:
         user = db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
                                              ).first()
         user.blacklist = False
-        db_sess.commit()
-
-    def add_karma(self, add):
-        db_sess = database.session()
-        user = db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
-                                             ).first()
-        user.karma = user.karma + add
         db_sess.commit()

@@ -16,6 +16,7 @@ from app.bot.cogs.economics import EconomicsCog
 from app.bot.cogs.dm_sessions import DMSessionsCog
 from app.bot.cogs.barrel_organs import BarrelOrgansCog
 from app.bot.cogs.reactionroles import ReactionRolesCog
+from app.bot.cogs.guild_config import GuildConfigurationCog
 
 from app.bot.dmsessions.compliment_oneliner import ComplimentOneliner
 from app.bot.dmsessions.secret_santa import BarrellOrganCrafting
@@ -52,5 +53,6 @@ async def main():
                 "создать шарманку!": BarrellOrganCrafting
             }
         ))
+        await client.add_cog(GuildConfigurationCog(client))
 
         await client.start(TOKEN)

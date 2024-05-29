@@ -3,11 +3,12 @@ import math
 import discord
 from discord.ext import commands
 
-from app.db.models import SqlUser
+from app.db.models import SqlMembership
 from app.helper_tools import basic_embed
 from app.entities.users import User
+from app.entities.guilds import Guild
+from app.entities.memberships import Membership
 from app.checks import is_bot_moderator
-from app.config import logovo_config
 from app.db import database
 
 
@@ -20,35 +21,38 @@ class EconomicsCog(commands.Cog):
         name="карма-каналы",
         description="список каналов и категорий, в которых засчитывается карма"
     )
+    @commands.guild_only()
     async def karma_channel_list(self, ctx):
+        config = Guild(ctx.guild.id).config
+        channel_whitelist = config.get('karma.channel_whitelist', [])
+        channel_whitelist_keywords = config.get(
+            'karma.channel_whitelist_keywords', []
+        )
+        category_whitelist = config.get('karma.category_whitelist', [])
+
         result = ""
-        for category_id in logovo_config['category_whitelist']:
-            category = self.bot.get_channel(category_id)
+        for category_id in category_whitelist:
+            category = ctx.guild.get_channel(category_id)
             if category:
                 result += f'* Вся категория **{category.name}**\n'
-        # this is a workaround in order to not create a separate config
-        # entry for guilds
-        guilds = set()
-        for channel_id in logovo_config['channel_whitelist']:
-            channel = self.bot.get_channel(channel_id)
-            if channel:
-                guilds.add(channel.guild)
-        for guild in guilds:
-            for channel in guild.channels:
-                if channel.category and channel.category.id \
-                    in logovo_config['category_whitelist']:
-                    continue
-                channel_whitelisted = channel.id in logovo_config['channel_whitelist']
-                keyword_whitelisted = True in [
-                    word in channel.name for word in
-                    logovo_config['channel_whitelist_keywords']
-                ]
-                if channel_whitelisted or keyword_whitelisted:
-                    result += f'* <#{channel.id}>\n'
+
+        for channel in ctx.guild.channels:
+            if channel.category and channel.category.id \
+                in category_whitelist:
+                continue
+            channel_whitelisted = channel.id in channel_whitelist
+            keyword_whitelisted = True in [
+                word in channel.name for word in
+                channel_whitelist_keywords
+            ]
+            if channel_whitelisted or keyword_whitelisted:
+                result += f'* <#{channel.id}>\n'
+
         embed = basic_embed(
             title="Все каналы с работающей кармой",
             text=result
         )
+
         await ctx.send(embed=embed)
 
 
@@ -56,17 +60,21 @@ class EconomicsCog(commands.Cog):
         name="карма",
         description="посмотреть свою или чью-то карму."
     )
-    @discord.app_commands.rename(duser="цель")
-    @discord.app_commands.describe(duser='чью карму посмотреть')
-    async def view_karma(self, ctx, duser: discord.User | None):
-        if not duser:
-            duser = ctx.author
-        user = User(duser.id)
+    @discord.app_commands.rename(member="цель")
+    @discord.app_commands.describe(member='чью карму посмотреть')
+    @commands.guild_only()
+    async def view_karma(self, ctx, member: discord.Member | None):
+        if not member:
+            member = ctx.author
+
+        membership = Membership(member.id, ctx.guild.id)
+
         embed = basic_embed(
-            "Профиль " + duser.name, "Постовая карма: " + str(user.karma)
+            "Профиль " + member.name, "Постовая карма: " + str(membership.karma)
         )
-        if duser.avatar:
-            embed.set_thumbnail(url=duser.avatar.url)
+        if member.avatar:
+            embed.set_thumbnail(url=member.avatar.url)
+
         await ctx.send(embed=embed)
 
 
@@ -76,24 +84,26 @@ class EconomicsCog(commands.Cog):
     )
     @discord.app_commands.rename(page="номер_страницы")
     @discord.app_commands.describe(page='какую страницу открыть')
+    @commands.guild_only()
     async def leaderboard(self, ctx, page: int = 1):
         db_sess = database.session()
-        users = (
-            db_sess.query(SqlUser)
-            .filter(SqlUser.karma != 0)
-            .order_by(SqlUser.karma.desc())
+        memberships = (
+            db_sess.query(SqlMembership)
+            .filter(SqlMembership.karma != 0)
+            .order_by(SqlMembership.karma.desc())
         )
-        maxpage = math.ceil(users.count() / 10)
+
+        maxpage = math.ceil(memberships.count() / 10)
         page = max(1, min(maxpage, page))
         text = ""
-        for i, user in enumerate(users[(page - 1) * 10 : page * 10]):
+        for i, membership in enumerate(memberships[(page - 1) * 10 : page * 10]):
             text += (
                 "**"
                 + str((page - 1) * 10 + i + 1)
                 + ".** `["
-                + str(user.karma)
+                + str(membership.karma)
                 + "]` <@!"
-                + str(user.discord_id)
+                + str(membership.user.discord_id)
                 + ">\n"
             )
         embed = basic_embed(
@@ -115,8 +125,9 @@ class EconomicsCog(commands.Cog):
         confirm_code="код подтверждения - введите команду без него, чтобы получить"
     )
     @is_bot_moderator()
+    @commands.guild_only()
     async def move_karma(
-        self, ctx, source: discord.User, target: discord.User,
+        self, ctx, source: discord.Member, target: discord.Member,
         confirm_code: str | None
     ):
         real_confirm_code = str(source.id)[-4:-1] + str(target.id)[-4:-1]
@@ -132,12 +143,18 @@ class EconomicsCog(commands.Cog):
             return
 
         db_sess = database.session()
-        source_db = db_sess.query(SqlUser).filter(
-            SqlUser.discord_id == source.id).first()
-        target_db = db_sess.query(SqlUser).filter(
-            SqlUser.discord_id == target.id).first()
+        source_db = db_sess.query(SqlMembership).filter(
+            SqlMembership.user == source.id,
+            SqlMembership.guild == ctx.guild.id
+        ).first()
+        target_db = db_sess.query(SqlMembership).filter(
+            SqlMembership.user == target.id,
+            SqlMembership.guild == ctx.guild.id
+        ).first()
+
         target_db.karma += source_db.karma
         source_db.karma = 0
+
         db_sess.commit()
 
         await ctx.send(f"Дело сделано... \
@@ -145,6 +162,7 @@ class EconomicsCog(commands.Cog):
 
     async def reaction_event(self, payload, meaning=1):
         channel = await self.bot.fetch_channel(payload.channel_id)
+        guild = channel.guild
         msg = await channel.fetch_message(payload.message_id)
         if msg.webhook_id:
             return
@@ -152,23 +170,30 @@ class EconomicsCog(commands.Cog):
         if user.id == msg.author.id or user.bot or msg.author.bot:
             return
 
-        category_whitelisted = channel.category and (
-            channel.category_id in logovo_config['category_whitelist']
+        config = Guild(guild.id).config
+        channel_whitelist = config.get('karma.channel_whitelist', [])
+        channel_whitelist_keywords = config.get(
+            'karma.channel_whitelist_keywords', []
         )
-        channel_whitelisted = payload.channel_id in logovo_config['channel_whitelist']
+        category_whitelist = config.get('karma.category_whitelist', [])
+        praise = config.get('karma.emojis', [])
+
+        category_whitelisted = channel.category and (
+            channel.category_id in category_whitelist
+        )
+        channel_whitelisted = payload.channel_id in channel_whitelist
         keyword_whitelisted = True in [
-            word in channel.name for word in logovo_config['channel_whitelist_keywords']
+            word in channel.name for word in channel_whitelist_keywords
         ]
 
         if not (category_whitelisted or channel_whitelisted or keyword_whitelisted):
             return
         if User(payload.user_id).is_blacklisted() or User(msg.author.id).is_blacklisted():
             return
-       # if days_delta(msg) >= CONFIG['message_expiration_date']:
-       #     return
-        if payload.emoji.id in logovo_config['praise']:
-            user = User(msg.author.id)
-            user.add_karma(logovo_config['coeff'] * meaning)
+
+        if payload.emoji.id in praise:
+            membership = Membership(msg.author.id, guild.id)
+            membership.add_karma(config.get("karma.coeff", 1) * meaning)
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
