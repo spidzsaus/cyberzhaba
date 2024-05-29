@@ -89,8 +89,10 @@ class EconomicsCog(commands.Cog):
         db_sess = database.session()
         memberships = (
             db_sess.query(SqlMembership)
-            .filter(SqlMembership.karma != 0)
-            .order_by(SqlMembership.karma.desc())
+            .filter(
+                SqlMembership.karma != 0,
+                SqlMembership.guild == ctx.guild.id
+            ).order_by(SqlMembership.karma.desc())
         )
 
         maxpage = math.ceil(memberships.count() / 10)
@@ -103,7 +105,7 @@ class EconomicsCog(commands.Cog):
                 + ".** `["
                 + str(membership.karma)
                 + "]` <@!"
-                + str(membership.user.discord_id)
+                + str(membership.user)
                 + ">\n"
             )
         embed = basic_embed(
