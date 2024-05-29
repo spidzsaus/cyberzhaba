@@ -11,7 +11,7 @@ class GuildConfig:
     def get(self, key, default=None):
         try:
             result = self.guild.sql().config[key]
-        except KeyError:
+        except (KeyError, TypeError):
             return default
         return result
 
@@ -21,6 +21,8 @@ class GuildConfig:
     def __setitem__(self, key, value):
         db_sess = database.session()
         sql_guild = db_sess.get(SqlGuild, self.guild.discord_id)
+        if sql_guild.config is None:
+            sql_guild.config = {}
         sql_guild.config[key] = value
         flag_modified(sql_guild, "config")
         db_sess.commit()
