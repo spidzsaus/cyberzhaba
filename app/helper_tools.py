@@ -73,7 +73,7 @@ class AnyEmojiConverter(commands.Converter):
 def determine_personal_role(member: discord.Member):
     personal_role = None
     for i in reversed(member.roles):
-        if i.color != discord.Color.default:
+        if i.color != discord.Color.default():
             personal_role = i
             break
     if personal_role is None:
