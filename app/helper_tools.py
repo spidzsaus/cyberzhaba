@@ -68,3 +68,18 @@ class AnyEmojiConverter(commands.Converter):
             return await commands.EmojiConverter().convert(ctx, argument)
         except commands.EmojiNotFound:
             return assert_unicode_emoji(argument)
+
+
+def determine_personal_role(member: discord.Member):
+    personal_role = None
+    for i in reversed(member.roles):
+        if i.color != discord.Color.default:
+            personal_role = i
+            break
+    if personal_role is None:
+        return None
+    if not personal_role.is_assignable():
+        return None
+    if personal_role.permissions.value != 0:
+        return None
+    return personal_role
