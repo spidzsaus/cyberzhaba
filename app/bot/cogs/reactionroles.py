@@ -40,8 +40,20 @@ class ReactionRolesCog(commands.Cog):
                 return
             if member.get_role(rr.role_id) is None:
                 await member.add_roles(role)
+                try:
+                    await member.send(
+                        embed=basic_embed(None, f"✅ Выдана роль `{role.name}`")
+                    )
+                except Exception as err:
+                    pass
             else:
                 await member.remove_roles(role)
+                try:
+                    await member.send(
+                        embed=basic_embed(None, f"✅ Снята роль `{role.name}`")
+                    )
+                except Exception:
+                    pass
 
     @commands.hybrid_group(
         name="галочки", fallback="список",
