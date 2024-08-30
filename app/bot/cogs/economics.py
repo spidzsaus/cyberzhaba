@@ -1,4 +1,5 @@
 import math
+from datetime import datetime, timedelta, timezone
 
 import discord
 from discord.ext import commands
@@ -191,6 +192,9 @@ class EconomicsCog(commands.Cog):
         if not (category_whitelisted or channel_whitelisted or keyword_whitelisted):
             return
         if User(payload.user_id).is_blacklisted() or User(msg.author.id).is_blacklisted():
+            return
+        if datetime.today().replace(tzinfo=timezone.utc) \
+           - msg.created_at > timedelta(days=14):
             return
 
         if payload.emoji.id in praise:
