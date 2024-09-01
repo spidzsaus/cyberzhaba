@@ -22,9 +22,11 @@ class DMSessionsCog(commands.Cog):
             target_session = [
                 session_type(message) for keyword, session_type
                 in self.sessions.items() if message.content.startswith(keyword)
-            ][0]
-            if target_session:
-                self.active_sessions[message.author.id] = target_session
+            ]
+            if len(target_session) > 0:
+                self.active_sessions[message.author.id] = target_session[0]
+            else:
+                return
         try:
             await self.active_sessions[message.author.id].feed(message)
         except EndDMSession:
