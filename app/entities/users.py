@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from app.db.models import SqlUser, SqlBarrellOrgan
 from app.db import database
 
@@ -64,4 +66,12 @@ class User:
         user = db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
                                              ).first()
         user.blacklist = False
+        db_sess.commit()
+
+    def mark_activity(self, activity_type: str):
+        db_sess = database.session()
+        user = db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
+                                             ).first()
+        user.last_activity = datetime.now()
+        user.last_activity_type = activity_type
         db_sess.commit()

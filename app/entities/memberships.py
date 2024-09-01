@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from app.db.models import SqlMembership
 from app.entities.users import User
 from app.entities.guilds import Guild
@@ -40,4 +42,11 @@ class Membership:
         db_sess = database.session()
         membership = db_sess.get(SqlMembership, self.id)
         membership.karma += amount
+        db_sess.commit()
+
+    def mark_activity(self, activity_type: str):
+        db_sess = database.session()
+        membership = db_sess.get(SqlMembership, self.id)
+        membership.last_activity = datetime.now()
+        membership.last_activity_type = activity_type
         db_sess.commit()
