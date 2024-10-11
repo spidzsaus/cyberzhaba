@@ -78,11 +78,20 @@ class ReactionRolesCog(commands.Cog):
         for rr in reactionroles:
             rr_entity = ReactionRole(rr)
             emoji_text = str(await rr_entity.get_emoji(self.bot))
-            message = await rr_entity.get_message(self.bot)
-            message_text = message.to_reference().jump_url if message else 'СООБЩЕНИЕ УДАЛЕНО'
+            error_emoji = ""
+            try:
+                message = await rr_entity.get_message(self.bot)
+                message_text = message.to_reference().jump_url if message else 'СООБЩЕНИЕ УДАЛЕНО'
+                if message_text == 'СООБЩЕНИЕ УДАЛЕНО':
+                    error_emoji = "⚠️ "
+            except discord.errors.Forbidden:
+                message_text = 'НЕТ ДОСТУПА'
+                error_emoji = "⚠️ "
             role = await rr_entity.get_role(self.bot)
             role_text = role.mention if role else 'РОЛЬ УДАЛЕНА'
-            text += f"ID:{rr_entity.id} - {emoji_text} {message_text} {role_text}"
+            if not role:
+                error_emoji = "⚠️ "
+            text += f"{error_emoji}ID:{rr_entity.id} - {emoji_text} {message_text} {role_text}"
             text += '\n'
         embed = basic_embed(
             title=f"Список галоcheck (Страница {page}/{maxpage})",
