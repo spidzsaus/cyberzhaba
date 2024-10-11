@@ -85,16 +85,12 @@ class ReactionRolesCog(commands.Cog):
                 if message_text == 'СООБЩЕНИЕ УДАЛЕНО':
                     error_emoji = "⚠️ "
             except discord.errors.Forbidden:
-                message_text = 'НЕТ ДОСТУПА'
-                error_emoji = "⚠️ "
-            try:
-                role = await rr_entity.get_role(self.bot)
-                role_text = role.mention if role else 'РОЛЬ УДАЛЕНА'
-                if not role:
-                    error_emoji = "⚠️ "
-            except discord.errors.Forbidden:
-                role = None
-                role_text = f'<@&{rr.role_id}>'
+                text += f"⚠️ ID:{rr_entity.id} - <@&{rr.role_id}> \
+в <#{rr.channel_id}>, НЕТ ДОСТУПА"
+                return
+            role = await rr_entity.get_role(self.bot)
+            role_text = role.mention if role else 'РОЛЬ УДАЛЕНА'
+            if not role:
                 error_emoji = "⚠️ "
             text += f"{error_emoji}ID:{rr_entity.id} - {emoji_text} {message_text} {role_text}"
             text += '\n'
