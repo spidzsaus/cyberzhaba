@@ -77,17 +77,17 @@ class ReactionRolesCog(commands.Cog):
         text = ""
         for rr in reactionroles:
             rr_entity = ReactionRole(rr)
-            emoji_text = str(await rr_entity.get_emoji(self.bot))
-            error_emoji = ""
             try:
-                message = await rr_entity.get_message(self.bot)
-                message_text = message.to_reference().jump_url if message else 'СООБЩЕНИЕ УДАЛЕНО'
-                if message_text == 'СООБЩЕНИЕ УДАЛЕНО':
-                    error_emoji = "⚠️ "
+                emoji_text = str(await rr_entity.get_emoji(self.bot))
             except discord.errors.Forbidden:
                 text += f"⚠️ ID:{rr_entity.id} - <@&{rr.role_id}> \
 в <#{rr.channel_id}>, НЕТ ДОСТУПА\n"
                 continue
+            error_emoji = ""
+            message = await rr_entity.get_message(self.bot)
+            message_text = message.to_reference().jump_url if message else 'СООБЩЕНИЕ УДАЛЕНО'
+            if message_text == 'СООБЩЕНИЕ УДАЛЕНО':
+                error_emoji = "⚠️ "
             role = await rr_entity.get_role(self.bot)
             role_text = role.mention if role else 'РОЛЬ УДАЛЕНА'
             if not role:
