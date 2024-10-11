@@ -152,13 +152,16 @@ class ReactionRolesCog(commands.Cog):
         if not reaction_role:
             raise NotFound(f'Reactionrole with id {rrid} does not exist')
         rr_entity = ReactionRole(reaction_role.first())
-        message = await rr_entity.get_message(self.bot)
-        emoji = await rr_entity.get_emoji(self.bot)
-        if message and emoji:
-            await message.remove_reaction(
-                emoji=emoji,
-                member=self.bot.user
-            )
+        try:
+            message = await rr_entity.get_message(self.bot)
+            emoji = await rr_entity.get_emoji(self.bot)
+            if message and emoji:
+                await message.remove_reaction(
+                    emoji=emoji,
+                    member=self.bot.user
+                )
+        except discord.errors.Forbidden:
+            pass
         reaction_role.delete()
         db_sess.commit()
         await ctx.send(embed=basic_embed(
