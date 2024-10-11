@@ -1,6 +1,6 @@
 discord.py~=2.4.0
 eyed3~=0.9.7
-pillow~=9.3.0
+pillow @ git+https://github.com/python-pillow/Pillow.git@main
 numpy~=1.26.2
 SQLAlchemy~=1.4.40
 python-dotenv~=1.0.0
