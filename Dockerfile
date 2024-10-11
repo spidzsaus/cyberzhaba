@@ -1,4 +1,4 @@
-FROM python:latest
+FROM python:3.12.7
 
 RUN apt-get -y update
 RUN apt-get -y upgrade
