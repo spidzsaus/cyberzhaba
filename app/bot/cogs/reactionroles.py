@@ -86,7 +86,7 @@ class ReactionRolesCog(commands.Cog):
                     error_emoji = "⚠️ "
             except discord.errors.Forbidden:
                 text += f"⚠️ ID:{rr_entity.id} - <@&{rr.role_id}> \
-в <#{rr.channel_id}>, НЕТ ДОСТУПА"
+в <#{rr.channel_id}>, НЕТ ДОСТУПА\n"
                 return
             role = await rr_entity.get_role(self.bot)
             role_text = role.mention if role else 'РОЛЬ УДАЛЕНА'
