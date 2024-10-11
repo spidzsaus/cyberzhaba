@@ -84,10 +84,16 @@ class ReactionRolesCog(commands.Cog):
 в <#{rr.channel_id}>, НЕТ ДОСТУПА\n"
                 continue
             error_emoji = ""
-            message = await rr_entity.get_message(self.bot)
-            message_text = message.to_reference().jump_url if message else 'СООБЩЕНИЕ УДАЛЕНО'
-            if message_text == 'СООБЩЕНИЕ УДАЛЕНО':
-                error_emoji = "⚠️ "
+            try:
+                message = await rr_entity.get_message(self.bot)
+                message_text = message.to_reference().jump_url \
+                               if message else 'СООБЩЕНИЕ УДАЛЕНО'
+                if message_text == 'СООБЩЕНИЕ УДАЛЕНО':
+                    error_emoji = "⚠️ "
+            except Exception:
+                text += f"⚠️ ID:{rr_entity.id} - <@&{rr.role_id}> \
+в <#{rr.channel_id}>, НЕТ ДОСТУПА\n"
+                continue
             role = await rr_entity.get_role(self.bot)
             role_text = role.mention if role else 'РОЛЬ УДАЛЕНА'
             if not role:
