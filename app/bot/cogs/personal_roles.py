@@ -47,6 +47,8 @@ class PersonalRolesCog(commands.Cog):
                     )
                 )
                 return
+            if color == discord.Color.default():
+                color = discord.Color.from_str("#000001")
             values['color'] = color
 
         if name is not None:
