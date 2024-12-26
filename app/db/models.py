@@ -20,6 +20,7 @@ class SqlUser(SqlAlchemyBase):
     discord_id = sqlalchemy.Column(sqlalchemy.Integer, unique=True)
     blacklist = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
     mod = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
+    birthday = sqlalchemy.Column(sqlalchemy.Date)
 
     last_activity = sqlalchemy.Column(sqlalchemy.DateTime)
     last_activity_type = sqlalchemy.Column(sqlalchemy.String, default="")
@@ -29,8 +30,12 @@ class SqlMembership(SqlAlchemyBase):
     __tablename__ = 'memberships'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
-    user = sqlalchemy.Column(sqlalchemy.ForeignKey(SqlUser.discord_id))
-    guild = sqlalchemy.Column(sqlalchemy.ForeignKey(SqlGuild.discord_id))
+    user = sqlalchemy.Column(
+        sqlalchemy.Integer, sqlalchemy.ForeignKey(SqlUser.discord_id)
+    )
+    guild = sqlalchemy.Column(
+        sqlalchemy.Integer, sqlalchemy.ForeignKey(SqlGuild.discord_id)
+    )
 
     karma = sqlalchemy.Column(sqlalchemy.Integer, default=0)
 

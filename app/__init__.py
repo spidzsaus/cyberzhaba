@@ -19,6 +19,7 @@ from app.bot.cogs.reactionroles import ReactionRolesCog
 from app.bot.cogs.guild_config import GuildConfigurationCog
 from app.bot.cogs.personal_roles import PersonalRolesCog
 from app.bot.cogs.last_activity import LastActivityCog
+from app.bot.cogs.birthdays import BirthdaysCog
 
 from app.bot.dmsessions.compliment_oneliner import ComplimentOneliner
 from app.bot.dmsessions.secret_santa import BarrellOrganCrafting
@@ -58,5 +59,6 @@ async def main():
         await client.add_cog(GuildConfigurationCog(client))
         await client.add_cog(PersonalRolesCog(client))
         await client.add_cog(LastActivityCog(client))
+        await client.add_cog(BirthdaysCog(client))
 
         await client.start(TOKEN)

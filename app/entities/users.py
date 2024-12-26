@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 
 from app.db.models import SqlUser, SqlBarrellOrgan
 from app.db import database
@@ -74,4 +74,11 @@ class User:
                                              ).first()
         user.last_activity = datetime.now()
         user.last_activity_type = activity_type
+        db_sess.commit()
+
+    def set_birthday(self, birthday: date):
+        db_sess = database.session()
+        user = db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
+                                             ).first()
+        user.birthday = birthday
         db_sess.commit()
