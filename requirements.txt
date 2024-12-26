@@ -1,4 +1,5 @@
 discord.py~=2.4.0
+audioop-lts==0.2.1; python_version>='3.13'
 eyed3~=0.9.7
 pillow @ git+https://github.com/python-pillow/Pillow.git@main
 numpy~=1.26.2
