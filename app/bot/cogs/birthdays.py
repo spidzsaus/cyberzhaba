@@ -20,10 +20,10 @@ class BirthdaysCog(commands.Cog):
         self.bot = bot
         self.birthday_alert_loop.start()
 
-    @tasks.loop(hour=0, minute=0, tzinfo=config.TIMEZONE)
+    @tasks.loop(time=dt.time(hour=0, minute=0, tzinfo=config.TIMEZONE))
     async def birthday_alert_loop(self):
         db_sess = database.session()
-        today = dt.date.today()
+        today = dt.datetime.now(config.TIMEZONE).date()
 
         for guild in self.bot.guilds:
             guild_config = Guild(guild.id).config
