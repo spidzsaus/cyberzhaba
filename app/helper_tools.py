@@ -83,3 +83,12 @@ def determine_personal_role(member: discord.Member):
     if personal_role.permissions.value != 0:
         return None
     return personal_role
+
+
+def join_with_and_at_end(elements):
+    if len(elements) == 1:
+        return elements[0]
+    elif len(elements) == 2:
+        return f"{elements[0]} и {elements[1]}"
+    else:
+        return ", ".join(elements[:-1]) + f" и {elements[-1]}"

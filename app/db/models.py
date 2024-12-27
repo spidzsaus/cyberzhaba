@@ -42,6 +42,8 @@ class SqlMembership(SqlAlchemyBase):
     last_activity = sqlalchemy.Column(sqlalchemy.DateTime)
     last_activity_type = sqlalchemy.Column(sqlalchemy.String, default="")
 
+    birthday_event_id = sqlalchemy.Column(sqlalchemy.Integer)
+
 
 class SqlBarrellOrgan(SqlAlchemyBase):
     __tablename__ = 'barrellorgans'

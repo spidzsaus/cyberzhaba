@@ -13,8 +13,8 @@ class Membership:
 
         # this ensures these actually exist -
         # avoiding foreign key errors!
-        User(user_id)
-        Guild(guild_id)
+        self.user = User(user_id)
+        self.guild = Guild(guild_id)
 
         db_sess = database.session()
         sql_membership = db_sess.query(SqlMembership).filter(
@@ -49,4 +49,10 @@ class Membership:
         membership = db_sess.get(SqlMembership, self.id)
         membership.last_activity = datetime.now()
         membership.last_activity_type = activity_type
+        db_sess.commit()
+
+    def set_birthday_event_id(self, eid: int):
+        db_sess = database.session()
+        membership = db_sess.get(SqlMembership, self.id)
+        membership.birthday_event_id = eid
         db_sess.commit()

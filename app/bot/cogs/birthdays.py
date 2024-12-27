@@ -3,12 +3,14 @@ import datetime as dt
 import discord
 from discord.ext import commands, tasks
 import dateparser
+from sqlalchemy import update
 
 from app.entities.guilds import Guild
 from app.entities.users import User
+from app.entities.memberships import Membership
 from app.db.models import SqlUser, SqlMembership, SqlGuild
 from app.db import database
-from app.helper_tools import basic_embed
+from app.helper_tools import basic_embed, join_with_and_at_end
 from app.checks import is_bot_moderator
 from app import config
 
@@ -21,6 +23,7 @@ class BirthdaysCog(commands.Cog):
         self.birthday_alert_loop.start()
 
     @tasks.loop(time=dt.time(hour=0, minute=0, tzinfo=config.TIMEZONE))
+    # @tasks.loop(seconds=10) # for testing
     async def birthday_alert_loop(self):
         db_sess = database.session()
         today = dt.datetime.now(config.TIMEZONE).date()
@@ -60,6 +63,8 @@ class BirthdaysCog(commands.Cog):
                         (birthday, user.discord_id, this_reminder)
                     )
 
+            await self.organize_birthday_events(guild, birthdays)
+
             if not any_reminder:
                 continue
 
@@ -80,6 +85,57 @@ class BirthdaysCog(commands.Cog):
             await alert_channel.send(
                 embed=basic_embed("🍰 Предстоящие дни рождения", text)
             )
+
+    async def organize_birthday_events(self, guild: discord.Guild, birthdays):
+        today = dt.date.today()
+
+        dates = {}
+        for date, discord_id, _ in birthdays:
+            try:
+                dates[date].append(discord_id)
+            except KeyError:
+                dates[date] = [discord_id]
+
+        for date, discord_ids in dates.items():
+            if date <= today:
+                continue
+
+            db_memberships = [Membership(i, guild.id) for i in discord_ids]
+            usernames = [
+                (await guild.fetch_member(i)).name for i in discord_ids
+            ]
+
+            existing_event_id = db_memberships[0].sql().birthday_event_id
+            if existing_event_id is not None:
+                try:
+                    event = await guild.fetch_scheduled_event(existing_event_id)
+                    if event.status in (
+                        discord.EventStatus.completed,
+                        discord.EventStatus.cancelled
+                    ):
+                        raise discord.NotFound
+                except discord.NotFound:
+                    self.remove_event_from_all_memberships(existing_event_id)
+                else:
+                    continue
+
+            event = await guild.create_scheduled_event(
+                name=f"🍰 День рождения {join_with_and_at_end(usernames)}",
+                description=f"{date.strftime('%d.%m.%Y')}, время события \
+показывает полночь МСК этого числа по вашему времени.",
+                start_time=dt.datetime.combine(
+                    date, dt.time(tzinfo=config.TIMEZONE)
+                ),
+                end_time=dt.datetime.combine(
+                    date, dt.time(tzinfo=config.TIMEZONE)
+                )+dt.timedelta(days=1),
+                privacy_level=discord.PrivacyLevel.guild_only,
+                entity_type=discord.EntityType.external,
+                location="🌐"
+            )
+
+            for i in db_memberships:
+                i.set_birthday_event_id(event.id)
 
     @commands.hybrid_command(
         "деньрождения",
@@ -112,3 +168,23 @@ class BirthdaysCog(commands.Cog):
             date = date.replace(year=1604)
         db_user.set_birthday(date)
         await ctx.send(f"установлено {date}")
+
+    def remove_event_from_all_memberships(self, event_id: int):
+        db_sess = database.session()
+        db_sess.execute(
+            update(SqlMembership)
+            .where(SqlMembership.birthday_event_id == event_id)
+            .values(birthday_event_id=None)
+        )
+        db_sess.commit()
+
+    @commands.Cog.listener()
+    async def on_scheduled_event_delete(self, event: discord.ScheduledEvent):
+        self.remove_event_from_all_memberships(event.id)
+
+    @commands.Cog.listener()
+    async def on_scheduled_event_update(self, _, event: discord.ScheduledEvent):
+        if event.status in (
+            discord.EventStatus.completed, discord.EventStatus.cancelled
+        ):
+            self.remove_event_from_all_memberships(event.id)
