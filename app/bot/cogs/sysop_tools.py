@@ -8,7 +8,7 @@ from app.checks import is_bot_moderator
 from app.db import database
 
 
-class ModerationCog(commands.Cog):
+class SysOpToolsCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 

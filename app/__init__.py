@@ -9,7 +9,7 @@ import app.handlers
 from app.bot_logging import bot_logger
 from app.config import TOKEN
 
-from app.bot.cogs.moderation import ModerationCog
+from app.bot.cogs.sysop_tools import SysOpToolsCog
 from app.bot.cogs.help import HelpCog
 from app.bot.cogs.special_events import SpecialEventsCog
 from app.bot.cogs.economics import EconomicsCog
@@ -44,7 +44,7 @@ async def main():
 
         client.add_listener(app.handlers.on_command_error)
 
-        await client.add_cog(ModerationCog(client))
+        await client.add_cog(SysopToolsCog(client))
         await client.add_cog(HelpCog(client))
         await client.add_cog(SpecialEventsCog(client))
         await client.add_cog(EconomicsCog(client))
