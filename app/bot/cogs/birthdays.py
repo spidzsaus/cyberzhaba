@@ -119,20 +119,23 @@ class BirthdaysCog(commands.Cog):
                 else:
                     continue
 
-            event = await guild.create_scheduled_event(
-                name=f"🍰 День рождения {join_with_and_at_end(usernames)}",
-                description=f"{date.strftime('%d.%m.%Y')}, время события \
-показывает полночь МСК этого числа по вашему времени.",
-                start_time=dt.datetime.combine(
-                    date, dt.time(tzinfo=config.TIMEZONE)
-                ),
-                end_time=dt.datetime.combine(
-                    date, dt.time(tzinfo=config.TIMEZONE)
-                )+dt.timedelta(days=1),
-                privacy_level=discord.PrivacyLevel.guild_only,
-                entity_type=discord.EntityType.external,
-                location="🌐"
-            )
+            try:
+                event = await guild.create_scheduled_event(
+                    name=f"🍰 День рождения {join_with_and_at_end(usernames)}",
+                    description=f"{date.strftime('%d.%m.%Y')}, \
+время события показывает полночь МСК этого числа по вашему времени.",
+                    start_time=dt.datetime.combine(
+                        date, dt.time(tzinfo=config.TIMEZONE)
+                    ),
+                    end_time=dt.datetime.combine(
+                        date, dt.time(tzinfo=config.TIMEZONE)
+                    )+dt.timedelta(days=1),
+                    privacy_level=discord.PrivacyLevel.guild_only,
+                    entity_type=discord.EntityType.external,
+                    location="🌐"
+                )
+            except Exception:
+                continue
 
             for i in db_memberships:
                 i.set_birthday_event_id(event.id)
