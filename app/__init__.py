@@ -44,7 +44,7 @@ async def main():
 
         client.add_listener(app.handlers.on_command_error)
 
-        await client.add_cog(SysopToolsCog(client))
+        await client.add_cog(SysOpToolsCog(client))
         await client.add_cog(HelpCog(client))
         await client.add_cog(SpecialEventsCog(client))
         await client.add_cog(EconomicsCog(client))
