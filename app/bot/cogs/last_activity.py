@@ -150,15 +150,16 @@ class LastActivityCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_message_edit(self, payload: discord.RawMessageUpdateEvent):
-        try:
-            channel = await self.bot.fetch_channel(payload.channel_id)
-            message = await channel.fetch_message(payload.message_id)
-        except Exception:
-            pass
-        self.__mark_activity(
-            message.author.id, channel.guild.id,
-            f"message edited in <#{payload.channel_id}>"
-        )
+        # try:
+        #     channel = await self.bot.fetch_channel(payload.channel_id)
+        #     message = await channel.fetch_message(payload.message_id)
+        # except Exception:
+        #     pass
+        # self.__mark_activity(
+        #     message.author.id, channel.guild.id,
+        #     f"message edited in <#{payload.channel_id}>"
+        # )
+        pass
 
     @commands.Cog.listener()
     async def on_raw_typing(self, payload: discord.RawTypingEvent):
