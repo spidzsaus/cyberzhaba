@@ -107,10 +107,10 @@ class LastActivityCog(commands.Cog):
             if db_membership is not None \
                and db_membership.last_activity is not None:
                 dt = discord.utils.format_dt(
-                    db_user.last_activity, style='R'
+                    db_membership.last_activity, style='R'
                 )
                 dt += " (" + discord.utils.format_dt(
-                    db_user.last_activity
+                    db_membership.last_activity
                 ) + ")"
                 info += f"**Активность на сервере:** {dt}\n"
                 if level >= 1:
