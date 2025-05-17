@@ -82,3 +82,10 @@ class User:
                                              ).first()
         user.birthday = birthday
         db_sess.commit()
+
+    def set_mailbox_limit(self, limit: int):
+        db_sess = database.session()
+        user = db_sess.query(SqlUser).filter(SqlUser.discord_id == self.discord_id
+                                             ).first()
+        user.max_mailboxes = limit
+        db_sess.commit()

@@ -21,6 +21,7 @@ class SqlUser(SqlAlchemyBase):
     blacklist = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
     mod = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
     birthday = sqlalchemy.Column(sqlalchemy.Date)
+    max_mailboxes = sqlalchemy.Column(sqlalchemy.Integer, default=1)
 
     last_activity = sqlalchemy.Column(sqlalchemy.DateTime)
     last_activity_type = sqlalchemy.Column(sqlalchemy.String, default="")
@@ -63,3 +64,15 @@ class SqlReactionRole(SqlAlchemyBase):
     reaction_id = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
     reaction_char = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     role_id = sqlalchemy.Column(sqlalchemy.Integer)
+
+
+class SqlMailbox(SqlAlchemyBase):
+    __tablename__ = 'mailboxes'
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
+    user = sqlalchemy.Column(
+        sqlalchemy.Integer, sqlalchemy.ForeignKey(SqlUser.discord_id)
+    )
+
+    domain = sqlalchemy.Column(sqlalchemy.String)
+    local_part = sqlalchemy.Column(sqlalchemy.String)
+    registered_at = sqlalchemy.Column(sqlalchemy.DateTime)

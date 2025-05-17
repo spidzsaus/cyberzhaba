@@ -10,3 +10,5 @@ requests~=2.31.0
 emoji~=2.6.0
 alembic[tz]~=1.11.1
 dateparser==1.2.0
+aiohttp~=3.11.11
+aiodns~=3.4.0
